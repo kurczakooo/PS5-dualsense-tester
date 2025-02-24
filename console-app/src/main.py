@@ -1,7 +1,4 @@
 import time
-import threading
-import uvicorn
-import API.server as api
 from dualsense_controller import DualSenseController
 import config
 from controller_handlers.right_side_buttons import *
@@ -20,14 +17,10 @@ if len(device_infos) < 1:
 for i in device_infos:
     print(i)
 
-def controller_loop():
-    config.controller.activate()
-    while config.is_running:
-        time.sleep(0.001)
-    config.controller.deactivate()
 
-controlller_thread = threading.Thread(target=controller_loop, daemon=True)
-controlller_thread.start()
+config.controller.activate()
 
-if __name__ == "__main__":
-    uvicorn.run(api.app, host='127.0.0.1', port=8000)
+while config.is_running:
+    time.sleep(0.001)
+    
+config.controller.deactivate()

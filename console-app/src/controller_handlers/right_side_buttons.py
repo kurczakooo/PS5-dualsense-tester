@@ -1,9 +1,7 @@
 import config
-from API.server import send_event
 
 def on_cross_button_pressed():
     print('Cross pressed')
-    config.asyncio.run_coroutine_threadsafe(send_event('Cross pressed'), config.loop)
 
 def on_cross_button_released():
     print('Cross released')
