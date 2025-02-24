@@ -1,8 +1,10 @@
 import config
 from . import haptic_feedback as hf
+from . import misc as m
 
 def on_cross_button_pressed():
     print('Cross pressed')
+    m.battery_info()
 
 def on_cross_button_released():
     print('Cross released')
@@ -34,6 +36,7 @@ config.controller.btn_square.on_up(on_square_button_released)
     
 def on_triangle_button_pressed():
     print('Triangle pressed')
+    m.connection_info()
     
 def on_triangle_button_released():
     print('Triangle released')
@@ -41,11 +44,15 @@ def on_triangle_button_released():
 config.controller.btn_triangle.on_down(on_triangle_button_pressed)
 config.controller.btn_triangle.on_up(on_triangle_button_released)
 
+
 def on_options_button_pressed():
     print('Options pressed')
+    config.gyroscope = not config.gyroscope
+
 
 def on_options_button_released():
     print('Options released')
+    config.gyroscope = not config.gyroscope
 
 config.controller.btn_options.on_down(on_options_button_pressed)
 config.controller.btn_options.on_up(on_options_button_released)

@@ -18,7 +18,7 @@ def on_button_right_pressed():
 
 def on_button_right_released():
     print('Right button released')
-    at.set_left_adaptive_trigger()
+    at.turn_off_right_adaptive_trigger()
 
 config.controller.btn_right.on_down(on_button_right_pressed)
 config.controller.btn_right.on_up(on_button_right_released)

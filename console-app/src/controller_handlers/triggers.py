@@ -9,8 +9,6 @@ def on_right_trigger(value):
 config.controller.left_trigger.on_change(on_left_trigger)
 config.controller.right_trigger.on_change(on_right_trigger)
 
-#implement functions to test haptic feedback and adaptive triggers
-
 def on_r1_press():
     print('R1 pressed')
     

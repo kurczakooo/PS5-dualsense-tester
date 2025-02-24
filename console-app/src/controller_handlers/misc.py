@@ -37,7 +37,8 @@ def battery_info():
     
 #--------------------------------------------------------------------
 def on_gyroscope_change(gyroscope):
-    print(f'\rgyroscope change: {gyroscope}', end='', flush=True)
+    if config.gyroscope:
+        print(f'\rgyroscope change: {gyroscope}', end='', flush=True)
 
 
 def on_accelerometer_change(accelerometer):
@@ -48,6 +49,6 @@ def on_orientation_change(orientation):
     print(f'\rorientation change: {orientation}', end='', flush=True)
 
 
-# config.controller.gyroscope.on_change(on_gyroscope_change)
+config.controller.gyroscope.on_change(on_gyroscope_change)
 # config.controller.accelerometer.on_change(on_accelerometer_change)
 # config.controller.orientation.on_change(on_orientation_change)
