@@ -20,7 +20,10 @@ for i in device_infos:
 
 config.controller.activate()
 
-while config.is_running:
-    time.sleep(0.001)
+try:
+    while config.is_running:
+        time.sleep(0.001)
+except KeyboardInterrupt:
+    print("----Testing stopped with keyboard----")
     
 config.controller.deactivate()

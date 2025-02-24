@@ -4,7 +4,7 @@ def stop():
     config.is_running = False
 
 def on_ps_button_pressed():
-    print('----Testing stopped----')
+    print('----Testing stopped with PS button----')
     stop()
     
 config.controller.btn_ps.on_down(on_ps_button_pressed)    

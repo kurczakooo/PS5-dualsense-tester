@@ -1,13 +1,15 @@
 import config
-import controller_handlers.leds as leds 
-import controller_handlers.player_led as player_led
+from . import leds as leds 
+from . import player_led as player_led
 
 def on_touchpad_button_pressed():
     print('Touchpad pressed')
-     
+    player_led.brightness_high_player_leds()
+    player_led.turn_on_all_player_leds()
      
 def on_touchpad_button_released():
     print('Touchpad released')
+    player_led.turn_off_all_player_leds()
      
 config.controller.btn_touchpad.on_down(on_touchpad_button_pressed)
 config.controller.btn_touchpad.on_up(on_touchpad_button_released)
