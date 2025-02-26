@@ -1,29 +1,41 @@
 import time
+import threading
 from dualsense_controller import DualSenseController
-import config
-from controller_handlers.right_side_buttons import *
-from controller_handlers.left_side_buttons import *
-from controller_handlers.triggers import *
-from controller_handlers.touchpad import *
-from controller_handlers.analogs import *
-from controller_handlers.haptic_feedback import *
-from controller_handlers.misc import *
 
-device_infos = DualSenseController.enumerate_devices()
+# import config
+# from controller_handlers.right_side_buttons import *
+# from controller_handlers.left_side_buttons import *
+# from controller_handlers.triggers import *
+# from controller_handlers.touchpad import *
+# from controller_handlers.analogs import *
+# from controller_handlers.haptic_feedback import *
+# from controller_handlers.misc import *
+import frontend_config as frontend
 
-if len(device_infos) < 1:
-    raise Exception('No DualSense Controller available.')
+def controllers_thread_task():
+    device_infos = DualSenseController.enumerate_devices()
 
-for i in device_infos:
-    print(i)
+    if len(device_infos) < 1:
+        raise Exception('No DualSense Controller available.')
+
+    for i in device_infos:
+        print(i)
+
+    config.controller.activate()
+
+    try:
+        while config.is_running:
+            time.sleep(0.001)
+    except KeyboardInterrupt:
+        print("----Testing stopped with keyboard----")
+        
+    config.controller.deactivate()
 
 
-config.controller.activate()
+controllers_thread = threading.Thread(target=controllers_thread_task)
 
-try:
-    while config.is_running:
-        time.sleep(0.001)
-except KeyboardInterrupt:
-    print("----Testing stopped with keyboard----")
-    
-config.controller.deactivate()
+
+target=frontend.app.mainloop()
+
+# controllers_thread.start()
+
