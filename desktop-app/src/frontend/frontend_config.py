@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk  
-from backend import press_release_events as pre, state_events as se
+from backend import press_release_events as pre, state_events as se, continuous_events as ce
 from backend import config
 
 class App:
@@ -48,12 +48,44 @@ class App:
             font=('Arial', 12, 'bold')
         )
         
+        #create text for triggers press info
+        self.r2_progress_text = "Press 0.0"
+        self.l2_progress_text = "Press 0.0"
+        self.r2_progress_text_id = self.canvas.create_text(
+            440, 20, anchor='nw', 
+            text=self.r2_progress_text, 
+            fill="white", 
+            font=('Arial', 12, 'bold')
+        )
+        self.l2_progress_text_id = self.canvas.create_text(
+            230, 20, anchor='nw', 
+            text=self.l2_progress_text, 
+            fill="white", 
+            font=('Arial', 12, 'bold')
+        )
         
+        #create text for triggers adaptive
+        self.r2_adaptive_text = "Adaptive 0.0"
+        self.l2_adaptive_text = "Adaptive 0.0"
+        self.r2_adaptive_text_id = self.canvas.create_text(
+            440, 40, anchor='nw', 
+            text=self.r2_adaptive_text, 
+            fill="white", 
+            font=('Arial', 12, 'bold')
+        )
+        self.l2_adaptive_text_id = self.canvas.create_text(
+            230, 40, anchor='nw', 
+            text=self.l2_adaptive_text, 
+            fill="white", 
+            font=('Arial', 12, 'bold')
+        )
         
         #set the event binds to switch images
         self.set_press_release_binds()
         #set state binds like muting mic or enabling adaptiva triggers
         self.set_controller_state_binds()
+        #set continuous binds like trigger press or analogs
+        self.set_continuous_binds()
 
     def load_images(self):
         images = {
@@ -79,7 +111,7 @@ class App:
             "mute": ImageTk.PhotoImage(Image.open("../assets/mute_pressed.png").resize((750, 540))),
         }
         return images
-
+# ------------------------------------------------------------------------
     def change_image(self, image_name: str):
         self.canvas.itemconfig(self.image_id, image=self.images.get(image_name))
 
@@ -87,7 +119,7 @@ class App:
         for button, (press, release) in pre.events.items():
             self.app.bind(press, lambda event, btn=button: self.change_image(btn))
             self.app.bind(release, lambda event: self.change_image("default"))
-            
+# ----------------------------------------------------------------------
     def update_mute_text(self, event):
         mute, led =   config.mute, config.mute_led
         self.microphone_text = f"Muted: {mute}\n  LED: {led}"
@@ -95,7 +127,21 @@ class App:
             
     def set_controller_state_binds(self):
         self.app.bind(se.mute_event, self.update_mute_text)
-
+# ----------------------------------------------------------------------
+    def update_l2_progress_text(self, event):
+        value = config.l2_trigger_press
+        self.l2_progress_text = f"Press {str(value)}"
+        self.canvas.itemconfig(self.l2_progress_text_id, text=self.l2_progress_text)
+        
+    def update_r2_progress_text(self, event):
+        value = config.r2_trigger_press
+        self.r2_progress_text = f"Press {str(value)}"
+        self.canvas.itemconfig(self.r2_progress_text_id, text=self.r2_progress_text)
+        
+    def set_continuous_binds(self):
+        self.app.bind(ce.l2_press_change_event, self.update_l2_progress_text)
+        self.app.bind(ce.r2_press_change_event, self.update_r2_progress_text)
+# ----------------------------------------------------------------------
     def run(self):
         self.app.mainloop()
         
