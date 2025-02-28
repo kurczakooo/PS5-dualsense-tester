@@ -57,7 +57,6 @@ image_id = canvas.create_image(0, 0, anchor="nw", image=images.get('default'))
 def change_image(image_name: str):
     canvas.itemconfig(image_id, image=images.get(image_name))
 
-
 for button, (press, release) in events.events.items():
     app.bind(press, lambda event, btn=button: change_image(btn))
     app.bind(release, lambda event: change_image("default"))
