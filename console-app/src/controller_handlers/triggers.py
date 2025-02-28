@@ -8,20 +8,3 @@ def on_right_trigger(value):
 
 config.controller.left_trigger.on_change(on_left_trigger)
 config.controller.right_trigger.on_change(on_right_trigger)
-
-def on_r1_press():
-    print('R1 pressed')
-    
-def on_r1_released():
-    print('R1 released')
-    
-def on_l1_press():
-    print('L1 pressed')
-    
-def on_l1_released():
-    print('L1 released')
-    
-config.controller.btn_r1.on_down(on_r1_press)
-config.controller.btn_r1.on_up(on_r1_released)
-config.controller.btn_l1.on_down(on_l1_press)
-config.controller.btn_l1.on_up(on_l1_press)

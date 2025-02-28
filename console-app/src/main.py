@@ -3,8 +3,6 @@ import threading
 from dualsense_controller import DualSenseController
 
 import config
-from controller_handlers.right_side_buttons import *
-from controller_handlers.left_side_buttons import *
 from controller_handlers.triggers import *
 from controller_handlers.touchpad import *
 from controller_handlers.analogs import *
@@ -35,7 +33,4 @@ def controllers_thread_task():
 controllers_thread = threading.Thread(target=controllers_thread_task)
 controllers_thread.start()
 
-frontend.app.mainloop()
-
-
-
+frontend.frontend_app.run()

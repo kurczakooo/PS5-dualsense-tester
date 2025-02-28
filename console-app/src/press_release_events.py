@@ -26,11 +26,11 @@ events = {
 
 def on_button_pressed(button_name, event_name):
     print(f'{button_name} pressed')
-    frontend_config.app.event_generate(f'{event_name}', when="tail")
+    frontend_config.frontend_app.app.event_generate(f'{event_name}', when="tail")
 
 def on_button_released(button_name, event_name):
     print(f'{button_name} released')
-    frontend_config.app.event_generate(f'{event_name}', when="tail")
+    frontend_config.frontend_app.app.event_generate(f'{event_name}', when="tail")
 
 for button, (press_event, release_event) in events.items():
     getattr(config.controller, f'btn_{button}').on_down(partial(on_button_pressed, button, press_event))
