@@ -1,4 +1,4 @@
-import config
+from .. import config
 
 
 def calculate_lightbar_color(x, y):

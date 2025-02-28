@@ -1,4 +1,4 @@
-import config
+from .. import config
 
 def on_left_analog_move(value):
     print(f'\rleft analog: {value}    ', end='', flush=True)

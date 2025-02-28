@@ -1,4 +1,4 @@
-import config
+from .. import config
 
 #need to make a nice slider for these
 def left_motor_vibration(strength: int):

@@ -1,4 +1,4 @@
-import config
+from .. import config
 from . import leds as leds 
 from . import player_led as player_led
 

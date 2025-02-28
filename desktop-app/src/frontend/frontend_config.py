@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk  
-import press_release_events as pre
+from backend import press_release_events as pre, state_events as se
+from backend import config
 
 class App:
     
@@ -39,15 +40,20 @@ class App:
         self.image_id = self.canvas.create_image(0, 0, anchor="nw", image=self.images.get('default'))
         
         #create text for microphone info
+        self.microphone_text = "Muted: False\n  LED: False"
         self.microphone_text_id = self.canvas.create_text(
-            300, 400, anchor='nw', 
-            text="Muted: No\nLED: No", 
+            350, 380, anchor='nw', 
+            text=self.microphone_text, 
             fill="white", 
-            font=('Arial', 10, 'bold')
+            font=('Arial', 12, 'bold')
         )
+        
+        
         
         #set the event binds to switch images
         self.set_press_release_binds()
+        #set state binds like muting mic or enabling adaptiva triggers
+        self.set_controller_state_binds()
 
     def load_images(self):
         images = {
@@ -81,6 +87,14 @@ class App:
         for button, (press, release) in pre.events.items():
             self.app.bind(press, lambda event, btn=button: self.change_image(btn))
             self.app.bind(release, lambda event: self.change_image("default"))
+            
+    def update_mute_text(self, event):
+        mute, led =   config.mute, config.mute_led
+        self.microphone_text = f"Muted: {mute}\n  LED: {led}"
+        self.canvas.itemconfig(self.microphone_text_id, text=self.microphone_text)
+            
+    def set_controller_state_binds(self):
+        self.app.bind(se.mute_event, self.update_mute_text)
 
     def run(self):
         self.app.mainloop()

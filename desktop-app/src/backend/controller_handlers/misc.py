@@ -1,4 +1,4 @@
-import config
+from .. import config
 
 def stop():
     config.is_running = False
@@ -17,16 +17,6 @@ def on_error(error):
 config.controller.on_error(on_error)
 #--------------------------------------------------------------------
 
-def on_mute():
-    if config.controller.microphone.is_muted:
-        config.controller.microphone.set_unmuted()
-    else:
-        config.controller.microphone.set_muted()
-    print(config.controller.microphone._get_value())
-
-config.controller.btn_mute.on_down(on_mute)
-
-#--------------------------------------------------------------------
 #work on this, battery and connection type
 def connection_info():
     print(f'Controller connected with: {config.controller.connection_type}')

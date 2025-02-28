@@ -1,5 +1,6 @@
-import config
-import frontend_config
+from . import config
+from . import state_events
+from frontend import frontend_config
 from functools import partial
 
 events = {
@@ -26,6 +27,10 @@ events = {
 
 def on_button_pressed(button_name, event_name):
     print(f'{button_name} pressed')
+    
+    if button_name == "mute":
+        state_events.on_mute_press()
+    
     frontend_config.frontend_app.app.event_generate(f'{event_name}', when="tail")
 
 def on_button_released(button_name, event_name):

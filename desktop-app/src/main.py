@@ -2,13 +2,13 @@ import time
 import threading
 from dualsense_controller import DualSenseController
 
-import config
-from controller_handlers.triggers import *
-from controller_handlers.touchpad import *
-from controller_handlers.analogs import *
-from controller_handlers.haptic_feedback import *
-from controller_handlers.misc import *
-import frontend_config as frontend
+from backend import config
+from backend.controller_handlers.triggers import *
+from backend.controller_handlers.touchpad import *
+from backend.controller_handlers.analogs import *
+from backend.controller_handlers.haptic_feedback import *
+from backend.controller_handlers.misc import *
+from frontend import frontend_config as frontend
 
 def controllers_thread_task():
     device_infos = DualSenseController.enumerate_devices()

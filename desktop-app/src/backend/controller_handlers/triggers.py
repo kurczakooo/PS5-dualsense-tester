@@ -1,4 +1,4 @@
-import config
+from .. import config
 
 def on_left_trigger(value):
     print(f'\rleft trigger press: {value}  ', end="", flush=True)

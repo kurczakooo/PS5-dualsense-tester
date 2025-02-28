@@ -1,6 +1,4 @@
-import config
-from time import sleep
-import asyncio
+from .. import config
 
 def turn_on_all_player_leds():
     config.controller.player_leds.set_all()
