@@ -1,3 +1,5 @@
 dualsense-controller
 customtkinter
+pillow
+pywin32
 pyinstaller

@@ -2,14 +2,14 @@ import time
 import threading
 from dualsense_controller import DualSenseController
 
-# import config
-# from controller_handlers.right_side_buttons import *
-# from controller_handlers.left_side_buttons import *
-# from controller_handlers.triggers import *
-# from controller_handlers.touchpad import *
-# from controller_handlers.analogs import *
-# from controller_handlers.haptic_feedback import *
-# from controller_handlers.misc import *
+import config
+from controller_handlers.right_side_buttons import *
+from controller_handlers.left_side_buttons import *
+from controller_handlers.triggers import *
+from controller_handlers.touchpad import *
+from controller_handlers.analogs import *
+from controller_handlers.haptic_feedback import *
+from controller_handlers.misc import *
 import frontend_config as frontend
 
 def controllers_thread_task():
@@ -33,9 +33,9 @@ def controllers_thread_task():
 
 
 controllers_thread = threading.Thread(target=controllers_thread_task)
+controllers_thread.start()
+
+frontend.app.mainloop()
 
 
-target=frontend.app.mainloop()
-
-# controllers_thread.start()
 

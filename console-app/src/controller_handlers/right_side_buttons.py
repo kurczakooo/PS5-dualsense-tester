@@ -1,4 +1,5 @@
 import config
+import frontend_config
 from . import haptic_feedback as hf
 from . import misc as m
 
