@@ -42,7 +42,7 @@ class App:
         #create text for microphone info
         self.microphone_text = "Muted: False\n  LED: False"
         self.microphone_text_id = self.canvas.create_text(
-            350, 380, anchor='nw', 
+            345, 380, anchor='nw', 
             text=self.microphone_text, 
             fill="white", 
             font=('Arial', 12, 'bold')
@@ -78,6 +78,30 @@ class App:
             text=self.l2_adaptive_text, 
             fill="white", 
             font=('Arial', 12, 'bold')
+        )
+
+        #create lines to resemble analog movement
+        self.max_arrow_distance = 40
+        self.left_analog_center = (280, 290)
+        self.left_analog_arrow_end = self.left_analog_center
+        self.left_analog_arrow_id = self.canvas.create_line(
+            self.left_analog_center[0], self.left_analog_center[1],
+            self.left_analog_arrow_end[0], self.left_analog_arrow_end[1],
+            fill="red",
+            smooth=True,
+            width=5,
+            arrow="last"
+        )
+        
+        self.right_analog_center = (490, 290)
+        self.right_analog_arrow_end = self.right_analog_center
+        self.right_analog_arrow_id = self.canvas.create_line(
+            self.right_analog_center[0], self.right_analog_center[1],
+            self.right_analog_arrow_end[0], self.right_analog_arrow_end[1],
+            fill="red",
+            smooth=True,
+            width=5,
+            arrow="last"
         )
         
         #set the event binds to switch images
@@ -137,10 +161,33 @@ class App:
         value = config.r2_trigger_press
         self.r2_progress_text = f"Press {str(value)}"
         self.canvas.itemconfig(self.r2_progress_text_id, text=self.r2_progress_text)
+    
+    def update_left_analog_position(self, event):
+        pos = config.left_analog_move
+        dx = pos[0] * self.max_arrow_distance
+        dy = pos[1] * self.max_arrow_distance
+        self.left_analog_arrow_end = (self.left_analog_center[0] + dx ,self.left_analog_center[1] - dy)
+        self.canvas.coords(
+            self.left_analog_arrow_id, 
+            self.left_analog_center[0], self.left_analog_center[1],
+            self.left_analog_arrow_end[0], self.left_analog_arrow_end[1])
+    
+    def update_right_analog_position(self, event):
+        pos = config.right_analog_move
+        dx = pos[0] * self.max_arrow_distance
+        dy = pos[1] * self.max_arrow_distance
+        self.right_analog_arrow_end = (self.right_analog_center[0] + dx ,self.right_analog_center[1] - dy)
+        self.canvas.coords(
+            self.right_analog_arrow_id, 
+            self.right_analog_center[0], self.right_analog_center[1],
+            self.right_analog_arrow_end[0], self.right_analog_arrow_end[1])
         
     def set_continuous_binds(self):
         self.app.bind(ce.l2_press_change_event, self.update_l2_progress_text)
         self.app.bind(ce.r2_press_change_event, self.update_r2_progress_text)
+        
+        self.app.bind(ce.left_analog_move_event, self.update_left_analog_position)
+        self.app.bind(ce.right_analog_move_event, self.update_right_analog_position)
 # ----------------------------------------------------------------------
     def run(self):
         self.app.mainloop()

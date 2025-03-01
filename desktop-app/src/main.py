@@ -4,7 +4,6 @@ from dualsense_controller import DualSenseController
 
 from backend import config
 from backend.controller_handlers.touchpad import *
-from backend.controller_handlers.analogs import *
 from backend.controller_handlers.haptic_feedback import *
 from backend.controller_handlers.misc import *
 from frontend import frontend_config as frontend
@@ -21,7 +20,7 @@ def controllers_thread_task():
     config.controller.activate()
 
     try:
-        while config.is_running:
+        while config.is_running: 
             time.sleep(0.001)
     except KeyboardInterrupt:
         print("----Testing stopped with keyboard----")

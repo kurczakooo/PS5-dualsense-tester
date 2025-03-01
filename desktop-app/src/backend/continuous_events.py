@@ -16,3 +16,17 @@ def on_r2_trigger():
 
 config.controller.left_trigger.on_change(on_l2_trigger)
 config.controller.right_trigger.on_change(on_r2_trigger)
+
+
+left_analog_move_event = "<<left_analog_move>>"
+right_analog_move_event = "<<right_analog_move>>"
+def on_left_analog_move(value):
+    config.left_analog_move = (value.x, value.y)
+    frontend_config.frontend_app.app.event_generate(left_analog_move_event)
+
+def on_right_analog_move(value):
+    config.right_analog_move = (value.x, value.y)
+    frontend_config.frontend_app.app.event_generate(right_analog_move_event)
+    
+config.controller.left_stick.on_change(on_left_analog_move)
+config.controller.right_stick.on_change(on_right_analog_move)
