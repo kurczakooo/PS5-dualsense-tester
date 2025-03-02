@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk  
-from backend import press_release_events as pre, state_events as se, continuous_events as ce
+# from backend import press_release_events as pre, state_events as se, continuous_events as ce
 from backend import config
 
 class App:
@@ -42,7 +42,7 @@ class App:
         #create text for microphone info
         self.microphone_text = "Muted: False\n  LED: False"
         self.microphone_text_id = self.canvas.create_text(
-            345, 380, anchor='nw', 
+            335, 380, anchor='nw', 
             text=self.microphone_text, 
             fill="white", 
             font=('Arial', 12, 'bold')
@@ -104,12 +104,29 @@ class App:
             arrow="last"
         )
         
+        #create text to show analogs movement
+        self.left_analog_text = "(-0.54, 1.0)"
+        self.left_analog_text_id = self.canvas.create_text(
+            230, 380, anchor='nw', 
+            text=self.left_analog_text, 
+            fill="white", 
+            font=('Arial', 12, 'bold')
+        )
+        
+        self.right_analog_text = "(-0.54, 0.76)"
+        self.right_analog_text_id = self.canvas.create_text(
+            460, 380, anchor='nw', 
+            text=self.right_analog_text, 
+            fill="white", 
+            font=('Arial', 12, 'bold')
+        )
+        
         #set the event binds to switch images
-        self.set_press_release_binds()
-        #set state binds like muting mic or enabling adaptiva triggers
-        self.set_controller_state_binds()
-        #set continuous binds like trigger press or analogs
-        self.set_continuous_binds()
+        # self.set_press_release_binds()
+        # #set state binds like muting mic or enabling adaptiva triggers
+        # self.set_controller_state_binds()
+        # #set continuous binds like trigger press or analogs
+        # self.set_continuous_binds()
 
     def load_images(self):
         images = {
@@ -139,18 +156,18 @@ class App:
     def change_image(self, image_name: str):
         self.canvas.itemconfig(self.image_id, image=self.images.get(image_name))
 
-    def set_press_release_binds(self):
-        for button, (press, release) in pre.events.items():
-            self.app.bind(press, lambda event, btn=button: self.change_image(btn))
-            self.app.bind(release, lambda event: self.change_image("default"))
+    # def set_press_release_binds(self):
+    #     for button, (press, release) in pre.events.items():
+    #         self.app.bind(press, lambda event, btn=button: self.change_image(btn))
+    #         self.app.bind(release, lambda event: self.change_image("default"))
 # ----------------------------------------------------------------------
     def update_mute_text(self, event):
         mute, led =   config.mute, config.mute_led
         self.microphone_text = f"Muted: {mute}\n  LED: {led}"
         self.canvas.itemconfig(self.microphone_text_id, text=self.microphone_text)
             
-    def set_controller_state_binds(self):
-        self.app.bind(se.mute_event, self.update_mute_text)
+    # def set_controller_state_binds(self):
+    #     self.app.bind(se.mute_event, self.update_mute_text)
 # ----------------------------------------------------------------------
     def update_l2_progress_text(self, event):
         value = config.l2_trigger_press
@@ -164,6 +181,10 @@ class App:
     
     def update_left_analog_position(self, event):
         pos = config.left_analog_move
+        
+        self.left_analog_text = pos
+        self.canvas.itemconfig(self.left_analog_text_id, text=self.left_analog_text)
+        
         dx = pos[0] * self.max_arrow_distance
         dy = pos[1] * self.max_arrow_distance
         self.left_analog_arrow_end = (self.left_analog_center[0] + dx ,self.left_analog_center[1] - dy)
@@ -174,6 +195,10 @@ class App:
     
     def update_right_analog_position(self, event):
         pos = config.right_analog_move
+        
+        self.right_analog_text = pos
+        self.canvas.itemconfig(self.right_analog_text_id, text=self.right_analog_text)
+        
         dx = pos[0] * self.max_arrow_distance
         dy = pos[1] * self.max_arrow_distance
         self.right_analog_arrow_end = (self.right_analog_center[0] + dx ,self.right_analog_center[1] - dy)
@@ -182,12 +207,13 @@ class App:
             self.right_analog_center[0], self.right_analog_center[1],
             self.right_analog_arrow_end[0], self.right_analog_arrow_end[1])
         
-    def set_continuous_binds(self):
-        self.app.bind(ce.l2_press_change_event, self.update_l2_progress_text)
-        self.app.bind(ce.r2_press_change_event, self.update_r2_progress_text)
         
-        self.app.bind(ce.left_analog_move_event, self.update_left_analog_position)
-        self.app.bind(ce.right_analog_move_event, self.update_right_analog_position)
+    # def set_continuous_binds(self):
+    #     self.app.bind(ce.l2_press_change_event, self.update_l2_progress_text)
+    #     self.app.bind(ce.r2_press_change_event, self.update_r2_progress_text)
+        
+    #     self.app.bind(ce.left_analog_move_event, self.update_left_analog_position)
+    #     self.app.bind(ce.right_analog_move_event, self.update_right_analog_position)
 # ----------------------------------------------------------------------
     def run(self):
         self.app.mainloop()
