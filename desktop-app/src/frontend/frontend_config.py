@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk  
-# from backend import press_release_events as pre, state_events as se, continuous_events as ce
+from backend import press_release_events as pre, state_events as se, continuous_events as ce
 from backend import config
 
 class App:
@@ -105,7 +105,7 @@ class App:
         )
         
         #create text to show analogs movement
-        self.left_analog_text = "(-0.54, 1.0)"
+        self.left_analog_text = "(0.0, 0.0)"
         self.left_analog_text_id = self.canvas.create_text(
             230, 380, anchor='nw', 
             text=self.left_analog_text, 
@@ -113,7 +113,7 @@ class App:
             font=('Arial', 12, 'bold')
         )
         
-        self.right_analog_text = "(-0.54, 0.76)"
+        self.right_analog_text = "(0.0, 0.0)"
         self.right_analog_text_id = self.canvas.create_text(
             460, 380, anchor='nw', 
             text=self.right_analog_text, 
@@ -121,12 +121,33 @@ class App:
             font=('Arial', 12, 'bold')
         )
         
+        
+        #create dots to show fingers on touchpad
+        self.x_factor = 1920/220
+        self.y_factor = 1080/136
+        self.finger_on_touchpad_start_cords = (275, 82)
+        self.finger_1_coords = self.finger_on_touchpad_start_cords
+        self.finger_1_circle_id = self.canvas.create_aa_circle(
+            x_pos=self.finger_1_coords[0],
+            y_pos=self.finger_1_coords[1],
+            radius=3,
+            fill='red'
+        )
+        
+        self.finger_2_coords = self.finger_on_touchpad_start_cords
+        self.finger_2_circle_id = self.canvas.create_aa_circle(
+            x_pos=self.finger_2_coords[0],
+            y_pos=self.finger_2_coords[1],
+            radius=3,
+            fill='red'
+        )
+        
         #set the event binds to switch images
-        # self.set_press_release_binds()
-        # #set state binds like muting mic or enabling adaptiva triggers
-        # self.set_controller_state_binds()
-        # #set continuous binds like trigger press or analogs
-        # self.set_continuous_binds()
+        self.set_press_release_binds()
+        #set state binds like muting mic or enabling adaptiva triggers
+        self.set_controller_state_binds()
+        #set continuous binds like trigger press or analogs
+        self.set_continuous_binds()
 
     def load_images(self):
         images = {
@@ -156,18 +177,18 @@ class App:
     def change_image(self, image_name: str):
         self.canvas.itemconfig(self.image_id, image=self.images.get(image_name))
 
-    # def set_press_release_binds(self):
-    #     for button, (press, release) in pre.events.items():
-    #         self.app.bind(press, lambda event, btn=button: self.change_image(btn))
-    #         self.app.bind(release, lambda event: self.change_image("default"))
+    def set_press_release_binds(self):
+        for button, (press, release) in pre.events.items():
+            self.app.bind(press, lambda event, btn=button: self.change_image(btn))
+            self.app.bind(release, lambda event: self.change_image("default"))
 # ----------------------------------------------------------------------
     def update_mute_text(self, event):
         mute, led =   config.mute, config.mute_led
         self.microphone_text = f"Muted: {mute}\n  LED: {led}"
         self.canvas.itemconfig(self.microphone_text_id, text=self.microphone_text)
             
-    # def set_controller_state_binds(self):
-    #     self.app.bind(se.mute_event, self.update_mute_text)
+    def set_controller_state_binds(self):
+        self.app.bind(se.mute_event, self.update_mute_text)
 # ----------------------------------------------------------------------
     def update_l2_progress_text(self, event):
         value = config.l2_trigger_press
@@ -182,7 +203,7 @@ class App:
     def update_left_analog_position(self, event):
         pos = config.left_analog_move
         
-        self.left_analog_text = pos
+        self.left_analog_text = str(pos)
         self.canvas.itemconfig(self.left_analog_text_id, text=self.left_analog_text)
         
         dx = pos[0] * self.max_arrow_distance
@@ -196,7 +217,7 @@ class App:
     def update_right_analog_position(self, event):
         pos = config.right_analog_move
         
-        self.right_analog_text = pos
+        self.right_analog_text = str(pos)
         self.canvas.itemconfig(self.right_analog_text_id, text=self.right_analog_text)
         
         dx = pos[0] * self.max_arrow_distance
@@ -207,13 +228,44 @@ class App:
             self.right_analog_center[0], self.right_analog_center[1],
             self.right_analog_arrow_end[0], self.right_analog_arrow_end[1])
         
+    def update_touchpad_finger_1_pos(self, event):
+        touch_coordinates = config.touchpad_finger_1_coords
+        #divide by scale, cause the area is smaller, and add to starting points to offset accordingly
+        x_scaled = touch_coordinates[0]/self.x_factor + self.finger_on_touchpad_start_cords[0]
+        y_scaled = touch_coordinates[1]/self.y_factor + self.finger_on_touchpad_start_cords[1]
+
+        self.finger_1_coords = (x_scaled, y_scaled)
+        self.canvas.coords(
+            self.finger_1_circle_id,
+            self.finger_1_coords[0],
+            self.finger_1_coords[1],
+        )
         
-    # def set_continuous_binds(self):
-    #     self.app.bind(ce.l2_press_change_event, self.update_l2_progress_text)
-    #     self.app.bind(ce.r2_press_change_event, self.update_r2_progress_text)
+       
+    def update_touchpad_finger_2_pos(self, event):
+        touch_coordinates = config.touchpad_finger_2_coords
+        #divide by scale, cause the area is smaller, and add to starting points to offset accordingly
+        x_scaled = touch_coordinates[0]/self.x_factor + self.finger_on_touchpad_start_cords[0]
+        y_scaled = touch_coordinates[1]/self.y_factor + self.finger_on_touchpad_start_cords[1]
+
+        self.finger_2_coords = (x_scaled, y_scaled)
+        self.canvas.coords(
+            self.finger_2_circle_id,
+            self.finger_2_coords[0],
+            self.finger_2_coords[1],
+        )
         
-    #     self.app.bind(ce.left_analog_move_event, self.update_left_analog_position)
-    #     self.app.bind(ce.right_analog_move_event, self.update_right_analog_position)
+        
+    def set_continuous_binds(self):
+        self.app.bind(ce.l2_press_change_event, self.update_l2_progress_text)
+        self.app.bind(ce.r2_press_change_event, self.update_r2_progress_text)
+        
+        self.app.bind(ce.left_analog_move_event, self.update_left_analog_position)
+        self.app.bind(ce.right_analog_move_event, self.update_right_analog_position)
+        
+        self.app.bind(ce.finger_1_move_event, self.update_touchpad_finger_1_pos)
+        self.app.bind(ce.finger_2_move_event, self.update_touchpad_finger_2_pos)
+        
 # ----------------------------------------------------------------------
     def run(self):
         self.app.mainloop()
