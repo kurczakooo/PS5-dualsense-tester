@@ -113,6 +113,7 @@ class App:
             font=('Arial', 12, 'bold')
         )
         
+        
         self.right_analog_text = "(0.0, 0.0)"
         self.right_analog_text_id = self.canvas.create_text(
             460, 380, anchor='nw', 
