@@ -1,7 +1,6 @@
 from . import config
 from frontend import frontend_config
-
-mute_event = "<<microphone_toggled>>"
+from .events import mute_event
 
 def on_mute_press():
     if config.controller.microphone.is_muted:
@@ -17,5 +16,6 @@ def on_mute_state_change():
     config.mute_led = led
     
     frontend_config.frontend_app.app.event_generate(mute_event, when='tail')
-    
-config.controller.microphone.on_change(on_mute_state_change)
+   
+def bind_mic_handlers():
+    config.controller.microphone.on_change(on_mute_state_change)

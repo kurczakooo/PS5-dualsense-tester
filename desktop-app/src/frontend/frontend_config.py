@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk  
-from backend import press_release_events as pre, state_events as se, continuous_events as ce
+# from backend import state_events as se, press_release_events as pre, continuous_events as ce
+import backend.events as events
 from backend import config
 
 class App:
@@ -179,17 +180,17 @@ class App:
         self.canvas.itemconfig(self.image_id, image=self.images.get(image_name))
 
     def set_press_release_binds(self):
-        for button, (press, release) in pre.events.items():
+        for button, (press, release) in events.pr_events.items():
             self.app.bind(press, lambda event, btn=button: self.change_image(btn))
             self.app.bind(release, lambda event: self.change_image("default"))
 # ----------------------------------------------------------------------
     def update_mute_text(self, event):
-        mute, led =   config.mute, config.mute_led
+        mute, led = config.mute, config.mute_led
         self.microphone_text = f"Muted: {mute}\n  LED: {led}"
         self.canvas.itemconfig(self.microphone_text_id, text=self.microphone_text)
             
     def set_controller_state_binds(self):
-        self.app.bind(se.mute_event, self.update_mute_text)
+        self.app.bind(events.mute_event, self.update_mute_text)
 # ----------------------------------------------------------------------
     def update_l2_progress_text(self, event):
         value = config.l2_trigger_press
@@ -258,14 +259,14 @@ class App:
         
         
     def set_continuous_binds(self):
-        self.app.bind(ce.l2_press_change_event, self.update_l2_progress_text)
-        self.app.bind(ce.r2_press_change_event, self.update_r2_progress_text)
+        self.app.bind(events.l2_press_change_event, self.update_l2_progress_text)
+        self.app.bind(events.r2_press_change_event, self.update_r2_progress_text)
         
-        self.app.bind(ce.left_analog_move_event, self.update_left_analog_position)
-        self.app.bind(ce.right_analog_move_event, self.update_right_analog_position)
+        self.app.bind(events.left_analog_move_event, self.update_left_analog_position)
+        self.app.bind(events.right_analog_move_event, self.update_right_analog_position)
         
-        self.app.bind(ce.finger_1_move_event, self.update_touchpad_finger_1_pos)
-        self.app.bind(ce.finger_2_move_event, self.update_touchpad_finger_2_pos)
+        self.app.bind(events.finger_1_move_event, self.update_touchpad_finger_1_pos)
+        self.app.bind(events.finger_2_move_event, self.update_touchpad_finger_2_pos)
         
 # ----------------------------------------------------------------------
     def run(self):

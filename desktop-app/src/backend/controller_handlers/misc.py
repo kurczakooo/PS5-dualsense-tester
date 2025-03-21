@@ -7,14 +7,16 @@ def on_ps_button_pressed():
     print('----Testing stopped with PS button----')
     stop()
     
-config.controller.btn_ps.on_down(on_ps_button_pressed)    
+def bind_ps_press():    
+    config.controller.btn_ps.on_down(on_ps_button_pressed)    
     
     
 def on_error(error):
     print(f'An Error occured: {error}')
     stop()
     
-config.controller.on_error(on_error)
+def bind_error():    
+    config.controller.on_error(on_error)
 #--------------------------------------------------------------------
 
 #work on this, battery and connection type
