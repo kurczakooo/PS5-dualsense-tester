@@ -31,3 +31,5 @@ right_analog_move_event = "<<right_analog_move>>"
 
 finger_1_move_event = "<<finger_1_move>>"
 finger_2_move_event = "<<finger_2_move>>"
+
+device_info_available_event = "<<device_info>>"

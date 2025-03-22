@@ -1,6 +1,7 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk  
-# from backend import state_events as se, press_release_events as pre, continuous_events as ce
+from PIL import Image, ImageTk
+from backend.controller_handlers.haptic_feedback import toggle_left_haptic_feedback, toggle_right_haptic_feedback
+from backend.controller_handlers.adaptive_triggers import toggle_LAT
 import backend.events as events
 from backend import config
 
@@ -28,8 +29,8 @@ class App:
         #create and configure canvas on tab player 1
         self.canvas = ctk.CTkCanvas(
             master=self.tab_view.tab("player 1"), 
-            width=750, 
-            height=540, 
+            width=1440,#750, 
+            height=720,#540, 
             bg="#2B2B2B", #background color
             highlightthickness=0)
         self.canvas.grid(row=0, column=0)
@@ -48,6 +49,40 @@ class App:
             fill="white", 
             font=('Arial', 12, 'bold')
         )
+        
+        #create text for device info
+        self.device_info_text = "no device info available"
+        self.device_info_text_id = self.canvas.create_text(
+            20, 690, anchor="nw", 
+            text=self.device_info_text, 
+            fill="white", 
+            font=('Arial', 11, 'bold')
+        )
+        
+        ########################################################################################################################
+        #create buttons to toggle haptic feedback
+        HF_strength = 255 # max, later think of a slider
+        self.LHF_button = ctk.CTkButton(self.app, text="Left HF", command=lambda: toggle_left_haptic_feedback(HF_strength))
+        self.RHF_button = ctk.CTkButton(self.app, text="Right HF", command=lambda: toggle_right_haptic_feedback(HF_strength))
+
+        #create sliders to set adaptive triggers strength
+        def lat_slider_handler(str):
+            # config.left_adaptive_trigger_strength = str
+            toggle_LAT(0, round(str))
+            
+        
+        self.LAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255, command=lambda str: lat_slider_handler(str))
+        self.LAT_slider.set(0)
+        self.RAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255)
+        self.RAT_slider.set(0)
+
+        # positioning the buttons, sliders, etc
+        # 20 pixels horizontal gap, 40 pixel vertical gap
+        self.canvas.create_window(770, 50, window=self.LHF_button) 
+        self.canvas.create_window(930, 50, window=self.RHF_button)
+        self.canvas.create_window(770, 118, window=self.LAT_slider)
+        self.canvas.create_window(930, 118, window=self.RAT_slider)
+        ########################################################################################################################
         
         #create text for triggers press info
         self.r2_progress_text = "Press 0.0"
@@ -114,7 +149,6 @@ class App:
             font=('Arial', 12, 'bold')
         )
         
-        
         self.right_analog_text = "(0.0, 0.0)"
         self.right_analog_text_id = self.canvas.create_text(
             460, 380, anchor='nw', 
@@ -122,7 +156,6 @@ class App:
             fill="white", 
             font=('Arial', 12, 'bold')
         )
-        
         
         #create dots to show fingers on touchpad
         self.x_factor = 1920/220
@@ -189,8 +222,14 @@ class App:
         self.microphone_text = f"Muted: {mute}\n  LED: {led}"
         self.canvas.itemconfig(self.microphone_text_id, text=self.microphone_text)
             
+    def update_decide_info_text(self, event):
+        text = "        ".join(f"{key}: {value}" for key, value in config.device_info.items())
+        self.device_info_text = text
+        self.canvas.itemconfig(self.device_info_text_id, text=self.device_info_text)
+            
     def set_controller_state_binds(self):
         self.app.bind(events.mute_event, self.update_mute_text)
+        self.app.bind(events.device_info_available_event, self.update_decide_info_text)
 # ----------------------------------------------------------------------
     def update_l2_progress_text(self, event):
         value = config.l2_trigger_press

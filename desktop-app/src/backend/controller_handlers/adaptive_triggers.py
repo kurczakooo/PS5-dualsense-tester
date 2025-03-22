@@ -6,6 +6,12 @@ def set_left_adaptive_trigger(start_pos: int, strength: int):
     
 def turn_off_left_adaptive_trigger():
     config.controller.left_trigger.effect.off()
+    
+def toggle_LAT(start_pos: int, strength: int):
+    if strength == 0:
+        turn_off_left_adaptive_trigger()
+    else:
+        set_left_adaptive_trigger(start_pos, strength)
 
 def set_right_adaptive_trigger(start_pos: int, strength: int):
     config.controller.right_trigger.effect.continuous_resistance(start_pos, strength)
