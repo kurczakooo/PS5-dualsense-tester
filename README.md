@@ -1,8 +1,8 @@
 # PS5-dualsense-tester
 
-Python program for testing if every function of a ps5 dualsense controller works right.
+Python program for testing ps5 dualsense controllers.
 
-## TO DO
+## BACKLOG
 
 -   [x] dpad press/release
 -   [x] right pad press/release
