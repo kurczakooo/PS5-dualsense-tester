@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
 from backend.controller_handlers.haptic_feedback import toggle_left_haptic_feedback, toggle_right_haptic_feedback
-from backend.controller_handlers.adaptive_triggers import toggle_LAT
+from backend.controller_handlers.adaptive_triggers import toggle_LAT, toggle_RAT
 import backend.events as events
 from backend import config
 
@@ -59,30 +59,6 @@ class App:
             font=('Arial', 11, 'bold')
         )
         
-        ########################################################################################################################
-        #create buttons to toggle haptic feedback
-        HF_strength = 255 # max, later think of a slider
-        self.LHF_button = ctk.CTkButton(self.app, text="Left HF", command=lambda: toggle_left_haptic_feedback(HF_strength))
-        self.RHF_button = ctk.CTkButton(self.app, text="Right HF", command=lambda: toggle_right_haptic_feedback(HF_strength))
-
-        #create sliders to set adaptive triggers strength
-        def lat_slider_handler(str):
-            # config.left_adaptive_trigger_strength = str
-            toggle_LAT(0, round(str))
-            
-        
-        self.LAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255, command=lambda str: lat_slider_handler(str))
-        self.LAT_slider.set(0)
-        self.RAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255)
-        self.RAT_slider.set(0)
-
-        # positioning the buttons, sliders, etc
-        # 20 pixels horizontal gap, 40 pixel vertical gap
-        self.canvas.create_window(770, 50, window=self.LHF_button) 
-        self.canvas.create_window(930, 50, window=self.RHF_button)
-        self.canvas.create_window(770, 118, window=self.LAT_slider)
-        self.canvas.create_window(930, 118, window=self.RAT_slider)
-        ########################################################################################################################
         
         #create text for triggers press info
         self.r2_progress_text = "Press 0.0"
@@ -183,6 +159,38 @@ class App:
         self.set_controller_state_binds()
         #set continuous binds like trigger press or analogs
         self.set_continuous_binds()
+        
+        
+        ########################################################################################################################
+        #create buttons to toggle haptic feedback
+        HF_strength = 255 # max, later think of a slider
+        self.LHF_button = ctk.CTkButton(self.app, text="Left HF", command=lambda: toggle_left_haptic_feedback(HF_strength))
+        self.RHF_button = ctk.CTkButton(self.app, text="Right HF", command=lambda: toggle_right_haptic_feedback(HF_strength))
+
+        #create sliders to set adaptive triggers strength
+        def lat_slider_handler(str):
+            toggle_LAT(0, str)
+            self.l2_adaptive_text = f"Adaptive {str}"
+            self.canvas.itemconfig(self.l2_adaptive_text_id, text=self.l2_adaptive_text)
+            
+        def rat_slider_handler(str):
+            toggle_RAT(0, str)
+            self.r2_adaptive_text = f"Adaptive {str}"
+            self.canvas.itemconfig(self.r2_adaptive_text_id, text=self.r2_adaptive_text)
+        
+        self.LAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255, command=lambda str: lat_slider_handler(round(str)))
+        self.LAT_slider.set(0)
+        self.RAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255, command=lambda str: rat_slider_handler(round(str)))
+        self.RAT_slider.set(0)
+
+        # positioning the buttons, sliders, etc
+        # 20 pixels horizontal gap, 40 pixel vertical gap
+        self.canvas.create_window(770, 50, window=self.LHF_button) 
+        self.canvas.create_window(930, 50, window=self.RHF_button)
+        self.canvas.create_window(770, 118, window=self.LAT_slider)
+        self.canvas.create_window(930, 118, window=self.RAT_slider)
+        ########################################################################################################################
+        
 
     def load_images(self):
         images = {
