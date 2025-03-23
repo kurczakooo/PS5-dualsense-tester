@@ -47,7 +47,8 @@ class App:
             335, 380, anchor='nw', 
             text=self.microphone_text, 
             fill="white", 
-            font=('Arial', 12, 'bold')
+            font=('Arial', 12, 'bold'),
+            justify="center"
         )
         
         #create text for device info
@@ -56,7 +57,24 @@ class App:
             20, 690, anchor="nw", 
             text=self.device_info_text, 
             fill="white", 
-            font=('Arial', 11, 'bold')
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+        
+        #create text for battery info
+        self.battery_info_text = "no battery info available"
+        self.battery_text_id = self.canvas.create_text(
+            335, 480, anchor="nw", 
+            text="Battery State", 
+            fill="green", 
+            font=('Arial', 13, 'bold')
+        )
+        self.battery_info_text_id = self.canvas.create_text(
+            325, 500, anchor="nw", 
+            text=self.battery_info_text, 
+            fill="white", 
+            font=('Arial', 12, 'bold'),
+            justify="center"
         )
         
         
@@ -142,7 +160,7 @@ class App:
             x_pos=self.finger_1_coords[0],
             y_pos=self.finger_1_coords[1],
             radius=3,
-            fill='red'
+            fill=''
         )
         
         self.finger_2_coords = self.finger_on_touchpad_start_cords
@@ -150,7 +168,7 @@ class App:
             x_pos=self.finger_2_coords[0],
             y_pos=self.finger_2_coords[1],
             radius=3,
-            fill='red'
+            fill=''
         )
         
         #set the event binds to switch images
@@ -227,17 +245,24 @@ class App:
 # ----------------------------------------------------------------------
     def update_mute_text(self, event):
         mute, led = config.mute, config.mute_led
-        self.microphone_text = f"Muted: {mute}\n  LED: {led}"
+        self.microphone_text = f"Muted: {mute}\nLED: {led}"
         self.canvas.itemconfig(self.microphone_text_id, text=self.microphone_text)
             
-    def update_decide_info_text(self, event):
+    def update_device_info_text(self, event):
         text = "        ".join(f"{key}: {value}" for key, value in config.device_info.items())
         self.device_info_text = text
         self.canvas.itemconfig(self.device_info_text_id, text=self.device_info_text)
             
+    def update_battery_info_text(self, event):
+        text = f"Level: {config.battery_info.level_percentage}\nFull: {config.battery_info.full}\nCharging: {config.battery_info.charging}"
+        self.battery_info_text = text
+        self.canvas.itemconfig(self.battery_info_text_id, text=self.battery_info_text)
+            
     def set_controller_state_binds(self):
         self.app.bind(events.mute_event, self.update_mute_text)
-        self.app.bind(events.device_info_available_event, self.update_decide_info_text)
+        self.app.bind(events.device_info_available_event, self.update_device_info_text)
+        self.app.bind(events.battery_info_available_event, self.update_battery_info_text)
+        
 # ----------------------------------------------------------------------
     def update_l2_progress_text(self, event):
         value = config.l2_trigger_press
@@ -279,6 +304,7 @@ class App:
         
     def update_touchpad_finger_1_pos(self, event):
         touch_coordinates = config.touchpad_finger_1_coords
+        active = config.touchpad_finger_1_active
         #divide by scale, cause the area is smaller, and add to starting points to offset accordingly
         x_scaled = touch_coordinates[0]/self.x_factor + self.finger_on_touchpad_start_cords[0]
         y_scaled = touch_coordinates[1]/self.y_factor + self.finger_on_touchpad_start_cords[1]
@@ -289,10 +315,11 @@ class App:
             self.finger_1_coords[0],
             self.finger_1_coords[1],
         )
-        
-       
+        self.canvas.itemconfig(self.finger_1_circle_id, fill="red" if active else "")
+         
     def update_touchpad_finger_2_pos(self, event):
         touch_coordinates = config.touchpad_finger_2_coords
+        active = config.touchpad_finger_2_active
         #divide by scale, cause the area is smaller, and add to starting points to offset accordingly
         x_scaled = touch_coordinates[0]/self.x_factor + self.finger_on_touchpad_start_cords[0]
         y_scaled = touch_coordinates[1]/self.y_factor + self.finger_on_touchpad_start_cords[1]
@@ -303,6 +330,7 @@ class App:
             self.finger_2_coords[0],
             self.finger_2_coords[1],
         )
+        self.canvas.itemconfig(self.finger_2_circle_id, fill="red" if active else "")
         
         
     def set_continuous_binds(self):

@@ -34,11 +34,13 @@ def bind_analog_continuous_handlers():
 
 
 def on_touchpad__finger_1_move(value):
+    config.touchpad_finger_1_active = value.active
     config.touchpad_finger_1_coords = (value.x, value.y)
     frontend_config.frontend_app.app.event_generate(finger_1_move_event)
     leds.set_lightbar_color(value.x, value.y)
 
 def on_touchpad__finger_2_move(value):
+    config.touchpad_finger_2_active = value.active
     config.touchpad_finger_2_coords = (value.x, value.y)
     frontend_config.frontend_app.app.event_generate(finger_2_move_event)
 

@@ -33,3 +33,6 @@ finger_1_move_event = "<<finger_1_move>>"
 finger_2_move_event = "<<finger_2_move>>"
 
 device_info_available_event = "<<device_info>>"
+
+battery_info_available_event = "<<battery_info>>"
+battery_state_change_event = "<<battery_state_change>>"
