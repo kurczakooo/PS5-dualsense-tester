@@ -30,3 +30,8 @@ left_adaptive_trigger = False
 left_adaptive_trigger_strength = 0
 right_adaptive_trigger = False
 right_adaptive_trigger_strength = 0
+
+
+gyroscope = None
+accelerometer = None
+orientation = None

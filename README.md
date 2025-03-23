@@ -23,7 +23,8 @@ Python program for testing ps5 dualsense controllers.
 -   [ ] gyro pos text
 -   [ ] rotation pos text
 -   [ ] accelerometer text
--   [ ] battery info text
+-   [x] battery info text
+-   [ ] connection info text
 -   [x] controller info text
 -   [ ] update interface
 -   [ ] sliders for left and right HF strength

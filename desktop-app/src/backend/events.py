@@ -34,5 +34,8 @@ finger_2_move_event = "<<finger_2_move>>"
 
 device_info_available_event = "<<device_info>>"
 
-battery_info_available_event = "<<battery_info>>"
 battery_state_change_event = "<<battery_state_change>>"
+
+gyro_sensor_continuous_event = "<<gryo_change_event>>"
+acc_sensor_continuous_event = "<<acc_change_event>>"
+orient_sensor_continuous_event = "<<orient_change_event>>"

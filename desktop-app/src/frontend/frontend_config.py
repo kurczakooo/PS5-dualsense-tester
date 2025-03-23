@@ -64,16 +64,16 @@ class App:
         #create text for battery info
         self.battery_info_text = "no battery info available"
         self.battery_text_id = self.canvas.create_text(
-            335, 480, anchor="nw", 
+            70, 570, anchor="nw",
             text="Battery State", 
             fill="green", 
             font=('Arial', 13, 'bold')
         )
         self.battery_info_text_id = self.canvas.create_text(
-            325, 500, anchor="nw", 
+            60, 590, anchor="nw",
             text=self.battery_info_text, 
             fill="white", 
-            font=('Arial', 12, 'bold'),
+            font=('Arial', 11, 'bold'),
             justify="center"
         )
         
@@ -171,6 +171,57 @@ class App:
             fill=''
         )
         
+        #create text for gyroscope
+        self.gyroscope_text = "no gyroscope available"
+        self.gyroscope_title_id = self.canvas.create_text(
+            250, 570, anchor="nw", 
+            text="Gyroscope", 
+            fill="orange", 
+            font=('Arial', 13, 'bold'),
+            justify="center"
+        )
+        self.gyroscope_text_id = self.canvas.create_text(
+            270, 590, anchor="nw", 
+            text=self.gyroscope_text, 
+            fill="white", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+        
+        #create text for accelerometer
+        self.accelerometer_text = "no accelerometer available"
+        self.accelerometer_title_id = self.canvas.create_text(
+            430, 570, anchor="nw", 
+            text="Accelerometer", 
+            fill="orange", 
+            font=('Arial', 13, 'bold'),
+            justify="center"
+        )
+        self.accelerometer_text_id = self.canvas.create_text(
+            460, 590, anchor="nw", 
+            text=self.accelerometer_text, 
+            fill="white", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+        
+        #create text for orientation sensor
+        self.orientation_text = "no orientation sensor available"
+        self.orientation_title_id = self.canvas.create_text(
+            610, 570, anchor="nw", 
+            text="Orientation", 
+            fill="orange", 
+            font=('Arial', 13, 'bold'),
+            justify="center"
+        )
+        self.orientation_text_id = self.canvas.create_text(
+            610, 590, anchor="nw", 
+            text=self.orientation_text, 
+            fill="white", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+        
         #set the event binds to switch images
         self.set_press_release_binds()
         #set state binds like muting mic or enabling adaptiva triggers
@@ -261,7 +312,7 @@ class App:
     def set_controller_state_binds(self):
         self.app.bind(events.mute_event, self.update_mute_text)
         self.app.bind(events.device_info_available_event, self.update_device_info_text)
-        self.app.bind(events.battery_info_available_event, self.update_battery_info_text)
+        self.app.bind(events.battery_state_change_event, self.update_battery_info_text)
         
 # ----------------------------------------------------------------------
     def update_l2_progress_text(self, event):
@@ -332,7 +383,22 @@ class App:
         )
         self.canvas.itemconfig(self.finger_2_circle_id, fill="red" if active else "")
         
+    def update_gyroscope_text(self, event):
+        text = f"X = {config.gyroscope.x}\nY = {config.gyroscope.y}\nZ = {config.gyroscope.z}"
+        self.gyroscope_text = text
+        self.canvas.itemconfig(self.gyroscope_text_id, text=self.gyroscope_text)
         
+    def update_accelerometer_text(self, event):
+        text = f"X = {config.accelerometer.x}\nY = {config.accelerometer.y}\nZ = {config.accelerometer.z}"
+        self.accelerometer_text = text
+        self.canvas.itemconfig(self.accelerometer_text_id, text=self.accelerometer_text)
+        
+    def update_orientation_text(self, event):
+        text = f"Pitch = {config.orientation.pitch}\nRoll = {config.orientation.roll}\nYaw = {config.orientation.yaw}"
+        self.orientation_text = text
+        self.canvas.itemconfig(self.orientation_text_id, text=self.orientation_text)
+    
+    
     def set_continuous_binds(self):
         self.app.bind(events.l2_press_change_event, self.update_l2_progress_text)
         self.app.bind(events.r2_press_change_event, self.update_r2_progress_text)
@@ -342,6 +408,10 @@ class App:
         
         self.app.bind(events.finger_1_move_event, self.update_touchpad_finger_1_pos)
         self.app.bind(events.finger_2_move_event, self.update_touchpad_finger_2_pos)
+        
+        self.app.bind(events.gyro_sensor_continuous_event, self.update_gyroscope_text)
+        self.app.bind(events.acc_sensor_continuous_event, self.update_accelerometer_text)
+        self.app.bind(events.orient_sensor_continuous_event, self.update_orientation_text)
         
 # ----------------------------------------------------------------------
     def run(self):

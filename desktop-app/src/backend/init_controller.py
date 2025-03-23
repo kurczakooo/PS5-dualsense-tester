@@ -3,12 +3,15 @@ from dualsense_controller.core.hidapi import DeviceInfo
 
 from .state_events import bind_mic_handlers, bind_battery_handlers
 from .press_release_events import bind_press_release_handlers
-from .continuous_events import bind_trigger_continuous_handlers, bind_analog_continuous_handlers, bind_touchpad_continuous_handlers
+from .continuous_events import (bind_trigger_continuous_handlers, 
+                                bind_analog_continuous_handlers, 
+                                bind_touchpad_continuous_handlers, 
+                                bind_gyro_acc_orient_sensors)
 from .controller_handlers.misc import bind_ps_press, bind_error
 
 from . import config
 
-from .events import device_info_available_event, battery_info_available_event, battery_state_change_event
+from .events import device_info_available_event, battery_state_change_event
 from frontend import frontend_config
 
 
@@ -34,7 +37,7 @@ def init_controller(device_info_index: int, device_info: DeviceInfo):
     config.controller.activate()
     
     config.battery_info = config.controller.battery.value
-    frontend_config.frontend_app.app.event_generate(battery_info_available_event, when='tail')
+    frontend_config.frontend_app.app.event_generate(battery_state_change_event, when='tail')
     
     bind_error()
     bind_ps_press()
@@ -44,4 +47,5 @@ def init_controller(device_info_index: int, device_info: DeviceInfo):
     bind_analog_continuous_handlers()
     bind_touchpad_continuous_handlers()
     bind_battery_handlers()
+    bind_gyro_acc_orient_sensors()
     

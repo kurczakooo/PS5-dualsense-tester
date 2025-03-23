@@ -1,7 +1,15 @@
 from . import config 
 from .controller_handlers import leds as leds 
 from frontend import frontend_config
-from .events import l2_press_change_event, r2_press_change_event, left_analog_move_event, right_analog_move_event, finger_1_move_event, finger_2_move_event
+from .events import (l2_press_change_event, 
+                     r2_press_change_event, 
+                     left_analog_move_event, 
+                     right_analog_move_event, 
+                     finger_1_move_event, 
+                     finger_2_move_event, 
+                     gyro_sensor_continuous_event,
+                     acc_sensor_continuous_event,
+                     orient_sensor_continuous_event)
 
 def on_l2_trigger():
     value = config.controller.left_trigger._get_value()
@@ -47,3 +55,23 @@ def on_touchpad__finger_2_move(value):
 def bind_touchpad_continuous_handlers():
     config.controller.touch_finger_1.on_change(on_touchpad__finger_1_move)
     config.controller.touch_finger_2.on_change(on_touchpad__finger_2_move)
+    
+#--------------------------------------------------------------------
+def on_gyroscope_change(gyroscope):
+    config.gyroscope = gyroscope
+    frontend_config.frontend_app.app.event_generate(gyro_sensor_continuous_event)
+
+
+def on_accelerometer_change(accelerometer):
+    config.accelerometer = accelerometer
+    frontend_config.frontend_app.app.event_generate(acc_sensor_continuous_event)
+
+
+def on_orientation_change(orientation):
+    config.orientation = orientation
+    frontend_config.frontend_app.app.event_generate(orient_sensor_continuous_event)
+
+def bind_gyro_acc_orient_sensors():
+    config.controller.gyroscope.on_change(on_gyroscope_change)
+    config.controller.accelerometer.on_change(on_accelerometer_change)
+    config.controller.orientation.on_change(on_orientation_change)
