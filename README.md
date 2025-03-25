@@ -12,24 +12,25 @@ Python program for testing ps5 dualsense controllers.
 -   [x] microphone and led state text
 -   [x] R2, L2 press/release
 -   [x] R2, L2 press force text
--   [ ] R2, L2 slider for adaptive triggers
+-   [x] R2, L2 slider for adaptive triggers
 -   [x] R2, L2 adaptive triggers text
 -   [x] left force feedback toggle
 -   [x] right force feedback toggle
--   [ ] player led testing system
 -   [x] analogs movement mapping as arrows
 -   [x] analogs position text
 -   [x] finger1 and 2 movement on touchpad mapping
--   [ ] gyro pos text
--   [ ] rotation pos text
--   [ ] accelerometer text
+-   [x] gyro pos text
+-   [x] rotation pos text
+-   [x] accelerometer text
 -   [x] battery info text
--   [ ] connection info text
+-   [x] connection info text
 -   [x] controller info text
+-   [ ] player led testing system
 -   [ ] update interface
 -   [ ] sliders for left and right HF strength
 -   [ ] a function executed when you close the program which resets the controller settings and states
 -   [ ] window with all press/release buttons values displayed
+-   [ ] make it so you dont have to rerun the program to test a new controller
 
 ## IDEAS
 

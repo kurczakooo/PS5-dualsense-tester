@@ -77,6 +77,21 @@ class App:
             justify="center"
         )
         
+        #create text from connection info
+        self.connection_info_text = "no connection info available"
+        self.connection_text_id = self.canvas.create_text(
+            320, 480, anchor="nw",
+            text="Connection Type", 
+            fill="deep sky blue", 
+            font=('Arial', 13, 'bold')
+        )
+        self.connection_info_text_id = self.canvas.create_text(
+            345, 500, anchor="nw",
+            text=self.connection_info_text, 
+            fill="white", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
         
         #create text for triggers press info
         self.r2_progress_text = "Press 0.0"
@@ -308,11 +323,18 @@ class App:
         text = f"Level: {config.battery_info.level_percentage}\nFull: {config.battery_info.full}\nCharging: {config.battery_info.charging}"
         self.battery_info_text = text
         self.canvas.itemconfig(self.battery_info_text_id, text=self.battery_info_text)
-            
+    
+    def update_connection_info_text(self, event):
+        text = config.connection_info
+        self.connection_info_text = text
+        self.canvas.itemconfig(self.connection_info_text_id, text=self.connection_info_text)
+               
     def set_controller_state_binds(self):
         self.app.bind(events.mute_event, self.update_mute_text)
         self.app.bind(events.device_info_available_event, self.update_device_info_text)
         self.app.bind(events.battery_state_change_event, self.update_battery_info_text)
+        self.app.bind(events.connection_type_available_event, self.update_connection_info_text)
+        
         
 # ----------------------------------------------------------------------
     def update_l2_progress_text(self, event):

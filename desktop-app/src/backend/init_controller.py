@@ -11,7 +11,7 @@ from .controller_handlers.misc import bind_ps_press, bind_error
 
 from . import config
 
-from .events import device_info_available_event, battery_state_change_event
+from .events import device_info_available_event, battery_state_change_event, connection_type_available_event
 from frontend import frontend_config
 
 
@@ -35,6 +35,9 @@ def init_controller(device_info_index: int, device_info: DeviceInfo):
     frontend_config.frontend_app.app.event_generate(device_info_available_event, when='tail')
     
     config.controller.activate()
+    
+    config.connection_info = config.controller.connection_type
+    frontend_config.frontend_app.app.event_generate(connection_type_available_event, when='tail')
     
     config.battery_info = config.controller.battery.value
     frontend_config.frontend_app.app.event_generate(battery_state_change_event, when='tail')

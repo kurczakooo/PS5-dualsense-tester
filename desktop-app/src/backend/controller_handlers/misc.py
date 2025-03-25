@@ -4,8 +4,9 @@ def stop():
     config.is_running = False
 
 def on_ps_button_pressed():
-    print('----Testing stopped with PS button----')
-    stop()
+    # print('----Testing stopped with PS button----')
+    print("PS PRESSED")
+    # stop()
     
 def bind_ps_press():    
     config.controller.btn_ps.on_down(on_ps_button_pressed)    
@@ -17,9 +18,4 @@ def on_error(error):
     
 def bind_error():    
     config.controller.on_error(on_error)
-#--------------------------------------------------------------------
-
-#work on this, connection type
-def connection_info():
-    print(f'Controller connected with: {config.controller.connection_type}')
     

@@ -5,6 +5,8 @@ controller = None
 
 device_info = None
 
+connection_info = None
+
 battery_info = None
 
 is_running = False
@@ -18,7 +20,7 @@ r2_trigger_press = 0.0
 left_analog_move = (0.0, 0.0)
 right_analog_move = (0.0, 0.0)
 
-touchpad_finger_1_active = False # for later use
+touchpad_finger_1_active = False
 touchpad_finger_1_coords = (0.0, 0.0)
 touchpad_finger_2_active = False
 touchpad_finger_2_coords = (0.0, 0.0)
