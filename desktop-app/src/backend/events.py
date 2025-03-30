@@ -1,4 +1,6 @@
 
+controller_disconnected_event = "<<controller_disconnected>>"
+
 pr_events = {
     "cross": ["<<x_pressed>>", "<<x_released>>"],
     "triangle": ["<<triangle_pressed>>", "<<triangle_released>>"],

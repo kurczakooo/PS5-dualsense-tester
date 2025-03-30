@@ -62,7 +62,7 @@ class App:
         )
         
         #create text for battery info
-        self.battery_info_text = "no battery info available"
+        self.battery_info_text = "no battery\ninfo available"
         self.battery_text_id = self.canvas.create_text(
             70, 570, anchor="nw",
             text="Battery State", 
@@ -78,7 +78,7 @@ class App:
         )
         
         #create text from connection info
-        self.connection_info_text = "no connection info available"
+        self.connection_info_text = "no connection\ninfo available"
         self.connection_text_id = self.canvas.create_text(
             320, 480, anchor="nw",
             text="Connection Type", 
@@ -187,7 +187,7 @@ class App:
         )
         
         #create text for gyroscope
-        self.gyroscope_text = "no gyroscope available"
+        self.gyroscope_text = "no gyroscope\navailable"
         self.gyroscope_title_id = self.canvas.create_text(
             250, 570, anchor="nw", 
             text="Gyroscope", 
@@ -204,7 +204,7 @@ class App:
         )
         
         #create text for accelerometer
-        self.accelerometer_text = "no accelerometer available"
+        self.accelerometer_text = "no accelerometer\navailable"
         self.accelerometer_title_id = self.canvas.create_text(
             430, 570, anchor="nw", 
             text="Accelerometer", 
@@ -221,7 +221,7 @@ class App:
         )
         
         #create text for orientation sensor
-        self.orientation_text = "no orientation sensor available"
+        self.orientation_text = "no orientation\nsensor available"
         self.orientation_title_id = self.canvas.create_text(
             610, 570, anchor="nw", 
             text="Orientation", 
@@ -248,33 +248,29 @@ class App:
         ########################################################################################################################
         #create buttons to toggle haptic feedback
         HF_strength = 255 # max, later think of a slider
-        self.LHF_button = ctk.CTkButton(self.app, text="Left HF", command=lambda: toggle_left_haptic_feedback(HF_strength))
-        self.RHF_button = ctk.CTkButton(self.app, text="Right HF", command=lambda: toggle_right_haptic_feedback(HF_strength))
+        self.LHF_button = ctk.CTkButton(self.canvas, text="Left HF", command=lambda: toggle_left_haptic_feedback(HF_strength))
+        self.RHF_button = ctk.CTkButton(self.canvas, text="Right HF", command=lambda: toggle_right_haptic_feedback(HF_strength))
 
         #create sliders to set adaptive triggers strength
-        def lat_slider_handler(str):
-            toggle_LAT(0, str)
-            self.l2_adaptive_text = f"Adaptive {str}"
-            self.canvas.itemconfig(self.l2_adaptive_text_id, text=self.l2_adaptive_text)
-            
-        def rat_slider_handler(str):
-            toggle_RAT(0, str)
-            self.r2_adaptive_text = f"Adaptive {str}"
-            self.canvas.itemconfig(self.r2_adaptive_text_id, text=self.r2_adaptive_text)
-        
-        self.LAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255, command=lambda str: lat_slider_handler(round(str)))
+        self.LAT_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda str: self.lat_slider_handler(round(str)))
         self.LAT_slider.set(0)
-        self.RAT_slider = ctk.CTkSlider(self.app, width=140, height=20, from_=0, to=255, command=lambda str: rat_slider_handler(round(str)))
+        self.RAT_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda str: self.rat_slider_handler(round(str)))
         self.RAT_slider.set(0)
 
         # positioning the buttons, sliders, etc
         # 20 pixels horizontal gap, 40 pixel vertical gap
-        self.canvas.create_window(770, 50, window=self.LHF_button) 
-        self.canvas.create_window(930, 50, window=self.RHF_button)
-        self.canvas.create_window(770, 118, window=self.LAT_slider)
-        self.canvas.create_window(930, 118, window=self.RAT_slider)
+        self.LHF_button_id = self.canvas.create_window(770, 50, window=self.LHF_button) 
+        self.RHF_button_id = self.canvas.create_window(930, 50, window=self.RHF_button)
+        self.LAT_slider_id = self.canvas.create_window(770, 118, window=self.LAT_slider)
+        self.RAT_slidern_id = self.canvas.create_window(930, 118, window=self.RAT_slider)
         ########################################################################################################################
         
+
+    def on_close(self):
+        # # config.is_running = False
+        # if config.controller:
+        #     config.controller.deactivate()
+        self.app.destroy()
 
     def load_images(self):
         images = {
@@ -309,6 +305,66 @@ class App:
             self.app.bind(press, lambda event, btn=button: self.change_image(btn))
             self.app.bind(release, lambda event: self.change_image("default"))
 # ----------------------------------------------------------------------
+    def set_disconnected_screen(self, event):
+        print("DISCONNECTED FRONTEND LOG")
+        
+        canvas_windows = [
+            self.LHF_button_id,
+            self.RHF_button_id,
+            self.LAT_slider_id,
+            self.RAT_slidern_id,
+        ]
+
+        # Usuwanie przycisków i sliderów z canvas
+        for window_id in canvas_windows:
+            self.canvas.delete(window_id)
+        
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
+
+        # Tworzenie prostokątnego tła na cały ekran
+        self.background_id = self.canvas.create_rectangle(
+            0, 0, canvas_width, canvas_height, 
+            fill="#2B2B2B",
+            outline="",
+        )
+
+        # Wyświetlenie komunikatu na środku
+        self.disconnected_text_id = self.canvas.create_text(
+            canvas_width // 2,  
+            canvas_height // 2,  
+            text="Controller Disconnected",
+            font=("Arial", 25, "bold"),
+            fill="white"
+        )
+
+        # Funkcja usuwająca ekran rozłączenia
+        def remove_disconnected_screen():
+            self.canvas.delete(self.background_id)
+            self.canvas.delete(self.disconnected_text_id)
+            self.canvas.delete(button_window)
+            self.canvas.create_window(770, 50, window=self.LHF_button)
+            self.canvas.create_window(930, 50, window=self.RHF_button)
+            self.canvas.create_window(770, 118, window=self.LAT_slider)
+            self.canvas.create_window(930, 118, window=self.RAT_slider)
+
+        # Tworzenie przycisku
+        button = ctk.CTkButton(
+            master=self.canvas, 
+            text="Look for devices",
+            font=("Arial", 20, "bold"),
+            command=remove_disconnected_screen 
+        )
+
+        # Umieszczanie przycisku na canvasie
+        button_window = self.canvas.create_window(
+            canvas_width // 2, 
+            canvas_height // 2 + 50,
+            window=button
+        )
+
+        
+    
     def update_mute_text(self, event):
         mute, led = config.mute, config.mute_led
         self.microphone_text = f"Muted: {mute}\nLED: {led}"
@@ -328,12 +384,26 @@ class App:
         text = config.connection_info
         self.connection_info_text = text
         self.canvas.itemconfig(self.connection_info_text_id, text=self.connection_info_text)
+         
+    def lat_slider_handler(self, str):
+        toggle_LAT(0, str)
+        self.l2_adaptive_text = f"Adaptive {str}"
+        self.canvas.itemconfig(self.l2_adaptive_text_id, text=self.l2_adaptive_text)
+            
+    def rat_slider_handler(self, str):
+        toggle_RAT(0, str)
+        self.r2_adaptive_text = f"Adaptive {str}"
+        self.canvas.itemconfig(self.r2_adaptive_text_id, text=self.r2_adaptive_text)
                
     def set_controller_state_binds(self):
+        self.app.bind(events.controller_disconnected_event, self.set_disconnected_screen)
         self.app.bind(events.mute_event, self.update_mute_text)
         self.app.bind(events.device_info_available_event, self.update_device_info_text)
         self.app.bind(events.battery_state_change_event, self.update_battery_info_text)
         self.app.bind(events.connection_type_available_event, self.update_connection_info_text)
+        
+        #bind app close handler 
+        self.app.protocol("WM_DELETE_WINDOW", self.on_close)
         
         
 # ----------------------------------------------------------------------
