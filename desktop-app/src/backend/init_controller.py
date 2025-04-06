@@ -17,6 +17,7 @@ from frontend import frontend_config
 
 
 def init_controller(device_info_index: int, device_info: DeviceInfo):
+    
     config.controller = DualSenseController(
             device_index_or_device_info=device_info_index,
             microphone_initially_muted=False,
@@ -51,4 +52,3 @@ def init_controller(device_info_index: int, device_info: DeviceInfo):
     bind_touchpad_continuous_handlers()
     bind_battery_handlers()
     bind_gyro_acc_orient_sensors()
-    

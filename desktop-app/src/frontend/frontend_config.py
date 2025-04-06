@@ -4,11 +4,13 @@ from backend.controller_handlers.haptic_feedback import toggle_left_haptic_feedb
 from backend.controller_handlers.adaptive_triggers import toggle_LAT, toggle_RAT
 import backend.events as events
 from backend import config
+from backend.look_for_controllers import look_for_controllers
+from backend.controller_handlers import misc
 
 class App:
     
     def __init__(self):
-        #create amd configure app
+        #create and configure app
         self.app = ctk.CTk()
         self.app.title('PS5 CONTROLLER TESTER')
         self.app.geometry("1440x810")
@@ -262,15 +264,22 @@ class App:
         self.LHF_button_id = self.canvas.create_window(770, 50, window=self.LHF_button) 
         self.RHF_button_id = self.canvas.create_window(930, 50, window=self.RHF_button)
         self.LAT_slider_id = self.canvas.create_window(770, 118, window=self.LAT_slider)
-        self.RAT_slidern_id = self.canvas.create_window(930, 118, window=self.RAT_slider)
+        self.RAT_slider_id = self.canvas.create_window(930, 118, window=self.RAT_slider)
         ########################################################################################################################
-        
+        #button for test stop
+        self.STOP_button = ctk.CTkButton(self.canvas, 
+                                        fg_color='red',
+                                        text="STOP TESTING", 
+                                        font=('Arial', 13, 'bold'),
+                                        command=lambda: misc.stop())
+        self.STOP_button_id = self.canvas.create_window(770, 186, window=self.STOP_button)
 
-    def on_close(self):
-        # # config.is_running = False
-        # if config.controller:
-        #     config.controller.deactivate()
-        self.app.destroy()
+
+    # def on_close(self):
+    #     # # config.is_running = False
+    #     # if config.controller:
+    #     #     config.controller.deactivate()
+    #     self.app.destroy()
 
     def load_images(self):
         images = {
@@ -312,7 +321,8 @@ class App:
             self.LHF_button_id,
             self.RHF_button_id,
             self.LAT_slider_id,
-            self.RAT_slidern_id,
+            self.RAT_slider_id,
+            self.STOP_button_id
         ]
 
         # Usuwanie przycisków i sliderów z canvas
@@ -321,6 +331,7 @@ class App:
         
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
+        
 
         # Tworzenie prostokątnego tła na cały ekran
         self.background_id = self.canvas.create_rectangle(
@@ -340,13 +351,17 @@ class App:
 
         # Funkcja usuwająca ekran rozłączenia
         def remove_disconnected_screen():
-            self.canvas.delete(self.background_id)
-            self.canvas.delete(self.disconnected_text_id)
-            self.canvas.delete(button_window)
-            self.canvas.create_window(770, 50, window=self.LHF_button)
-            self.canvas.create_window(930, 50, window=self.RHF_button)
-            self.canvas.create_window(770, 118, window=self.LAT_slider)
-            self.canvas.create_window(930, 118, window=self.RAT_slider)
+            if look_for_controllers():
+                self.canvas.delete(self.background_id)
+                self.canvas.delete(self.disconnected_text_id)
+                self.canvas.delete(button_window)
+                self.LHF_button_id = self.canvas.create_window(770, 50, window=self.LHF_button)
+                self.RHF_button_id = self.canvas.create_window(930, 50, window=self.RHF_button)
+                self.LAT_slider_id = self.canvas.create_window(770, 118, window=self.LAT_slider)
+                self.RAT_slider_id = self.canvas.create_window(930, 118, window=self.RAT_slider)
+                self.STOP_button_id = self.canvas.create_window(770, 186, window=self.STOP_button)
+            else:
+                print("DIDNT WORK")
 
         # Tworzenie przycisku
         button = ctk.CTkButton(
@@ -403,7 +418,7 @@ class App:
         self.app.bind(events.connection_type_available_event, self.update_connection_info_text)
         
         #bind app close handler 
-        self.app.protocol("WM_DELETE_WINDOW", self.on_close)
+        # self.app.protocol("WM_DELETE_WINDOW", self.on_close)
         
         
 # ----------------------------------------------------------------------

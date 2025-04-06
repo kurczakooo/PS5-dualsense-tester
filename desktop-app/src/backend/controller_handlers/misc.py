@@ -3,13 +3,14 @@ from frontend import frontend_config
 from ..events import controller_disconnected_event
 
 def stop():
-    config.controller.deactivate()
     config.is_running = False
+    frontend_config.frontend_app.app.event_generate(controller_disconnected_event, when='tail')
+    # config.controller.deactivate()
 
 def on_ps_button_pressed():
     # print('----Testing stopped with PS button----')
     print("PS PRESSED")
-    stop()
+    # stop()
     
 def bind_ps_press():    
     config.controller.btn_ps.on_down(on_ps_button_pressed)    

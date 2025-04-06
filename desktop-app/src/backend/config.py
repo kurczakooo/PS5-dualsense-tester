@@ -1,6 +1,5 @@
 import tkinter
 
-
 controller = None
 
 device_info = None
