@@ -248,32 +248,149 @@ class App:
         
         
         ########################################################################################################################
-        #create buttons to toggle haptic feedback
-        HF_strength = 255 # max, later think of a slider
-        self.LHF_button = ctk.CTkButton(self.canvas, text="Left HF", command=lambda: toggle_left_haptic_feedback(HF_strength))
-        self.RHF_button = ctk.CTkButton(self.canvas, text="Right HF", command=lambda: toggle_right_haptic_feedback(HF_strength))
-
-        #create sliders to set adaptive triggers strength
-        self.LAT_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda str: self.lat_slider_handler(round(str)))
-        self.LAT_slider.set(0)
-        self.RAT_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda str: self.rat_slider_handler(round(str)))
-        self.RAT_slider.set(0)
-
-        # positioning the buttons, sliders, etc
-        # 20 pixels horizontal gap, 40 pixel vertical gap
-        self.LHF_button_id = self.canvas.create_window(770, 50, window=self.LHF_button) 
-        self.RHF_button_id = self.canvas.create_window(930, 50, window=self.RHF_button)
-        self.LAT_slider_id = self.canvas.create_window(770, 118, window=self.LAT_slider)
-        self.RAT_slider_id = self.canvas.create_window(930, 118, window=self.RAT_slider)
+        ######     RIGHT SIDE OF THE SCREEN     #####
         ########################################################################################################################
+        
+        #create text for awarness
+        self.HF_text_id = self.canvas.create_text(
+            1050, 20, anchor="center", 
+            text="REMEMBER TO PRESS STOP TESTING BEFORE DISCONNECTING !", 
+            fill="Red",
+            font=('Arial', 13, 'bold')
+        )
+        
         #button for test stop
         self.STOP_button = ctk.CTkButton(self.canvas, 
                                         fg_color='red',
                                         text="STOP TESTING", 
                                         font=('Arial', 13, 'bold'),
+                                        hover_color='dark red',
                                         command=lambda: misc.stop())
-        self.STOP_button_id = self.canvas.create_window(770, 186, window=self.STOP_button)
+        self.STOP_button_id = self.canvas.create_window(1050, 65, window=self.STOP_button)
+        
+        
+        # create text for haptic feedback
+        self.HF_text_id = self.canvas.create_text(
+            810, 105, anchor="nw", 
+            text="Haptic Feedback", 
+            fill="White", 
+            font=('Arial', 13, 'bold'),
+            justify="center"
+        )
+        
+        # create text for haptic feedback
+        self.HF_strength_text_id = self.canvas.create_text(
+            720, 130, anchor="nw", 
+            text="Strength", 
+            fill="Grey", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+        
+        self.LHF_strength = 255
+        self.RHF_strength = 255 
+        #create sliders for HF
+        self.LHF_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda x: print(x))
+        self.LHF_slider.set(self.LHF_strength)
+        self.RHF_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda x: print(x))
+        self.RHF_slider.set(self.RHF_strength)
+        
+        #create buttons to toggle haptic feedback
+        self.LHF_button = ctk.CTkButton(self.canvas, text="TOGGLE LEFT HF", command=lambda: toggle_left_haptic_feedback(self.HF_strength))
+        self.RHF_button = ctk.CTkButton(self.canvas, text="TOGGLE RIGHT HF", command=lambda: toggle_right_haptic_feedback(self.HF_strength))
 
+        # 20 pixels horizontal gap, 25 pixel vertical gap
+        self.LHF_slider_id = self.canvas.create_window(790, 165, window=self.LHF_slider)
+        self.RHF_slider_id = self.canvas.create_window(950, 165, window=self.RHF_slider)
+        self.LHF_button_id = self.canvas.create_window(790, 220, window=self.LHF_button) 
+        self.RHF_button_id = self.canvas.create_window(950, 220, window=self.RHF_button)
+
+        # create text for adaptive triggers
+        self.AT_text_id = self.canvas.create_text(
+            1164, 105, anchor="nw", 
+            text="Adaptive Triggers",
+            fill="White", 
+            font=('Arial', 13, 'bold'),
+            justify="center"
+        )
+        
+        # create text for adaptive triggers starting pos
+        self.AT_pos_text_id = self.canvas.create_text(
+            1075, 130, anchor="nw", 
+            text="Starting position", 
+            fill="Grey", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+        
+        # create text for adaptive triggers strength
+        self.AT_strength_text_id = self.canvas.create_text(
+            1075, 185, anchor="nw", 
+            text="Strength", 
+            fill="Grey", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+
+        #create sliders to set adaptive triggers starting pos
+        self.LAT_pos_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
+                                        from_=0, to=255, 
+                                        command=lambda str: self.lat_slider_handler(round(str)))
+        self.LAT_pos_slider.set(0)
+        self.RAT_pos_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
+                                        from_=0, to=255, 
+                                        command=lambda str: self.rat_slider_handler(round(str)))
+        self.RAT_pos_slider.set(0)
+        
+        #create sliders to set adaptive triggers strength
+        self.LAT_str_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
+                                        from_=0, to=255, 
+                                        command=lambda str: print(str))
+        self.LAT_str_slider.set(0)
+        self.RAT_str_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
+                                        from_=0, to=255, 
+                                        command=lambda str: print(str))
+        self.RAT_str_slider.set(0)
+
+
+        self.LAT_slider_id = self.canvas.create_window(1145, 165, window=self.LAT_pos_slider)
+        self.RAT_slider_id = self.canvas.create_window(1305, 165, window=self.RAT_pos_slider)
+        self.RAT_slider_id = self.canvas.create_window(1145, 220, window=self.LAT_str_slider)
+        self.RAT_slider_id = self.canvas.create_window(1305, 220, window=self.RAT_str_slider)
+
+        # create text for player LEDS
+        self.Player_leds_text_id = self.canvas.create_text(
+            820, 260, anchor="nw", 
+            text="Player LEDS",
+            fill="White", 
+            font=('Arial', 13, 'bold'),
+            justify="center"
+        )
+        
+        # create text for aplayer LEDS brightness
+        self.AT_pos_text_id = self.canvas.create_text(
+            720, 285, anchor="nw", 
+            text="Brightness", 
+            fill="Grey", 
+            font=('Arial', 11, 'bold'),
+            justify="center"
+        )
+        
+        self.LEDS_brightness = 255 
+        #create a slider for brightness
+        self.brightness_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
+                                               from_=0, to=3, number_of_steps=3,
+                                               command=lambda x: print(x))
+        self.brightness_slider.set(self.LEDS_brightness)
+        
+        #create buttons to toggle LEDS
+        self.inner_leds_button = ctk.CTkButton(self.canvas, text="TOGGLE INNER LEDS", command=lambda: print(""))
+        self.outer_leds_button = ctk.CTkButton(self.canvas, text="TOGGLE OUTER LEDS", command=lambda: print(""))
+
+        
+        self.brightness_slider_id = self.canvas.create_window(790, 320, window=self.brightness_slider)
+        self.inner_leds_button_id = self.canvas.create_window(790, 375, window=self.inner_leds_button) 
+        self.outer_leds_button_id = self.canvas.create_window(950, 375, window=self.outer_leds_button)
 
     # def on_close(self):
     #     # # config.is_running = False
