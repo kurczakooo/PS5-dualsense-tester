@@ -290,14 +290,20 @@ class App:
         self.LHF_strength = 255
         self.RHF_strength = 255 
         #create sliders for HF
-        self.LHF_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda x: print(x))
+        self.LHF_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
+                                        from_=0, to=255, number_of_steps=255, 
+                                        command=lambda str: self.lhf_slider_handler(str))
         self.LHF_slider.set(self.LHF_strength)
-        self.RHF_slider = ctk.CTkSlider(self.canvas, width=140, height=20, from_=0, to=255, command=lambda x: print(x))
+        self.RHF_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
+                                        from_=0, to=255, number_of_steps=255, 
+                                        command=lambda str: self.rhf_slider_handler(str))
         self.RHF_slider.set(self.RHF_strength)
         
         #create buttons to toggle haptic feedback
-        self.LHF_button = ctk.CTkButton(self.canvas, text="TOGGLE LEFT HF", command=lambda: toggle_left_haptic_feedback(self.HF_strength))
-        self.RHF_button = ctk.CTkButton(self.canvas, text="TOGGLE RIGHT HF", command=lambda: toggle_right_haptic_feedback(self.HF_strength))
+        self.LHF_button = ctk.CTkButton(self.canvas, text="TOGGLE LEFT HF", 
+                                        command=lambda: toggle_left_haptic_feedback(self.LHF_strength))
+        self.RHF_button = ctk.CTkButton(self.canvas, text="TOGGLE RIGHT HF", 
+                                        command=lambda: toggle_right_haptic_feedback(self.RHF_strength))
 
         # 20 pixels horizontal gap, 25 pixel vertical gap
         self.LHF_slider_id = self.canvas.create_window(790, 165, window=self.LHF_slider)
@@ -334,29 +340,31 @@ class App:
 
         #create sliders to set adaptive triggers starting pos
         self.LAT_pos_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
-                                        from_=0, to=255, 
-                                        command=lambda str: self.lat_slider_handler(round(str)))
+                                        from_=0, to=255, number_of_steps=255,
+                                        command=lambda str: self.lat_slider_handler(str))
         self.LAT_pos_slider.set(0)
         self.RAT_pos_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
-                                        from_=0, to=255, 
-                                        command=lambda str: self.rat_slider_handler(round(str)))
+                                        from_=0, to=255, number_of_steps=255,
+                                        command=lambda str: self.rat_slider_handler(str))
         self.RAT_pos_slider.set(0)
         
+        self.LAT_strength = 255
+        self.RAT_strength = 255
         #create sliders to set adaptive triggers strength
         self.LAT_str_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
-                                        from_=0, to=255, 
-                                        command=lambda str: print(str))
-        self.LAT_str_slider.set(0)
+                                        from_=0, to=255, number_of_steps=255,
+                                        command=lambda str: self.lat_strength_slider_handler(str))
+        self.LAT_str_slider.set(self.LAT_strength)
         self.RAT_str_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
-                                        from_=0, to=255, 
-                                        command=lambda str: print(str))
-        self.RAT_str_slider.set(0)
+                                        from_=0, to=255, number_of_steps=255,
+                                        command=lambda str: self.rat_strength_slider_handler(str))
+        self.RAT_str_slider.set(self.RAT_strength)
 
 
         self.LAT_slider_id = self.canvas.create_window(1145, 165, window=self.LAT_pos_slider)
         self.RAT_slider_id = self.canvas.create_window(1305, 165, window=self.RAT_pos_slider)
-        self.RAT_slider_id = self.canvas.create_window(1145, 220, window=self.LAT_str_slider)
-        self.RAT_slider_id = self.canvas.create_window(1305, 220, window=self.RAT_str_slider)
+        self.LAT_str_slider_id = self.canvas.create_window(1145, 220, window=self.LAT_str_slider)
+        self.RAT_str_slider_id = self.canvas.create_window(1305, 220, window=self.RAT_str_slider)
 
         # create text for player LEDS
         self.Player_leds_text_id = self.canvas.create_text(
@@ -435,14 +443,21 @@ class App:
         print("DISCONNECTED FRONTEND LOG")
         
         canvas_windows = [
+            self.STOP_button_id,
+            self.LHF_slider_id,
+            self.RHF_slider_id,
             self.LHF_button_id,
             self.RHF_button_id,
+            self.LAT_str_slider_id,
+            self.RAT_str_slider_id,
             self.LAT_slider_id,
             self.RAT_slider_id,
-            self.STOP_button_id
+            self.brightness_slider_id,
+            self.inner_leds_button_id,
+            self.outer_leds_button_id
         ]
 
-        # Usuwanie przycisków i sliderów z canvas
+        # Removing sliders and buttons
         for window_id in canvas_windows:
             self.canvas.delete(window_id)
         
@@ -450,14 +465,14 @@ class App:
         canvas_height = self.canvas.winfo_height()
         
 
-        # Tworzenie prostokątnego tła na cały ekran
+        # creating a background
         self.background_id = self.canvas.create_rectangle(
             0, 0, canvas_width, canvas_height, 
             fill="#2B2B2B",
             outline="",
         )
 
-        # Wyświetlenie komunikatu na środku
+        # creating disconnected text
         self.disconnected_text_id = self.canvas.create_text(
             canvas_width // 2,  
             canvas_height // 2,  
@@ -466,29 +481,34 @@ class App:
             fill="white"
         )
 
-        # Funkcja usuwająca ekran rozłączenia
+        # Removing the disconnected screen and drawing sliders and button again
         def remove_disconnected_screen():
             if look_for_controllers():
                 self.canvas.delete(self.background_id)
                 self.canvas.delete(self.disconnected_text_id)
                 self.canvas.delete(button_window)
-                self.LHF_button_id = self.canvas.create_window(770, 50, window=self.LHF_button)
-                self.RHF_button_id = self.canvas.create_window(930, 50, window=self.RHF_button)
-                self.LAT_slider_id = self.canvas.create_window(770, 118, window=self.LAT_slider)
-                self.RAT_slider_id = self.canvas.create_window(930, 118, window=self.RAT_slider)
-                self.STOP_button_id = self.canvas.create_window(770, 186, window=self.STOP_button)
+                self.STOP_button_id = self.canvas.create_window(1050, 65, window=self.STOP_button)
+                self.LHF_slider_id = self.canvas.create_window(790, 165, window=self.LHF_slider)
+                self.RHF_slider_id = self.canvas.create_window(950, 165, window=self.RHF_slider)
+                self.LHF_button_id = self.canvas.create_window(790, 220, window=self.LHF_button) 
+                self.RHF_button_id = self.canvas.create_window(950, 220, window=self.RHF_button)
+                self.LAT_slider_id = self.canvas.create_window(1145, 165, window=self.LAT_pos_slider)
+                self.RAT_slider_id = self.canvas.create_window(1305, 165, window=self.RAT_pos_slider)
+                self.LAT_str_slider_id = self.canvas.create_window(1145, 220, window=self.LAT_str_slider)
+                self.RAT_str_slider_id = self.canvas.create_window(1305, 220, window=self.RAT_str_slider)
+                self.brightness_slider_id = self.canvas.create_window(790, 320, window=self.brightness_slider)
+                self.inner_leds_button_id = self.canvas.create_window(790, 375, window=self.inner_leds_button) 
+                self.outer_leds_button_id = self.canvas.create_window(950, 375, window=self.outer_leds_button)
             else:
                 print("DIDNT WORK")
 
-        # Tworzenie przycisku
+        # creating look for dvices button
         button = ctk.CTkButton(
             master=self.canvas, 
             text="Look for devices",
             font=("Arial", 20, "bold"),
             command=remove_disconnected_screen 
         )
-
-        # Umieszczanie przycisku na canvasie
         button_window = self.canvas.create_window(
             canvas_width // 2, 
             canvas_height // 2 + 50,
@@ -517,16 +537,32 @@ class App:
         self.connection_info_text = text
         self.canvas.itemconfig(self.connection_info_text_id, text=self.connection_info_text)
          
-    def lat_slider_handler(self, str):
-        toggle_LAT(0, str)
-        self.l2_adaptive_text = f"Adaptive {str}"
+    def lhf_slider_handler(self, str):
+        config.left_haptic_feedback_strength = int(str)
+        self.LHF_strength = int(str)
+        
+    def rhf_slider_handler(self, str):
+        config.right_haptic_feedback_strength = int(str)
+        self.RHF_strength = int(str)
+    
+    def lat_slider_handler(self, pos):
+        toggle_LAT(int(pos), self.LAT_strength)
+        self.l2_adaptive_text = f"Adaptive {int(pos)}"
         self.canvas.itemconfig(self.l2_adaptive_text_id, text=self.l2_adaptive_text)
             
-    def rat_slider_handler(self, str):
-        toggle_RAT(0, str)
-        self.r2_adaptive_text = f"Adaptive {str}"
+    def rat_slider_handler(self, pos):
+        toggle_RAT(int(pos), self.RAT_strength)
+        self.r2_adaptive_text = f"Adaptive {int(pos)}"
         self.canvas.itemconfig(self.r2_adaptive_text_id, text=self.r2_adaptive_text)
+        
+    def lat_strength_slider_handler(self, str):
+        config.left_adaptive_trigger_strength = int(str)
+        self.LAT_strength = int(str)
                
+    def rat_strength_slider_handler(self, str):
+        config.right_adaptive_trigger_strength = int(str)
+        self.RAT_strength = int(str)
+        
     def set_controller_state_binds(self):
         self.app.bind(events.controller_disconnected_event, self.set_disconnected_screen)
         self.app.bind(events.mute_event, self.update_mute_text)

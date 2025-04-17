@@ -1,13 +1,12 @@
 from .. import config
 
-#need to make a nice slider for these s_max = 255
 def left_motor_vibration(strength: int):
     config.controller.left_rumble.set(strength)
     
 def left_motor_vibration_off():
     config.controller.left_rumble.set(0)
     
-def toggle_left_haptic_feedback(strength: int):
+def toggle_left_haptic_feedback(strength: int = config.left_haptic_feedback_strength):
     if config.left_haptic_feedback:
         left_motor_vibration_off()
         config.left_haptic_feedback = False
@@ -22,7 +21,7 @@ def right_motor_vibration(strength: int):
 def right_motor_vibration_off():
     config.controller.right_rumble.set(0)
     
-def toggle_right_haptic_feedback(strength: int):
+def toggle_right_haptic_feedback(strength: int = config.right_haptic_feedback_strength):
     if config.right_haptic_feedback:
         right_motor_vibration_off()
         config.right_haptic_feedback = False

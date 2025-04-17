@@ -1,6 +1,5 @@
 from .. import config
 
-#make also sliders for that -start pos [0,255] strength[0,255]
 def set_left_adaptive_trigger(start_pos: int, strength: int):
     config.controller.left_trigger.effect.continuous_resistance(start_pos, strength)
     

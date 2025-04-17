@@ -25,13 +25,20 @@ touchpad_finger_2_active = False
 touchpad_finger_2_coords = (0.0, 0.0)
 
 left_haptic_feedback = False
+left_haptic_feedback_strength = 255
 right_haptic_feedback = False
+right_haptic_feedback_strength = 255
 
 left_adaptive_trigger = False
 left_adaptive_trigger_strength = 0
+left_adaptive_trigger_pos = 0
 right_adaptive_trigger = False
 right_adaptive_trigger_strength = 0
+right_adaptive_trigger_pos = 0
 
+player_leds_brightness = 3
+player_leds_inner = False
+player_leds_outer = False
 
 gyroscope = None
 accelerometer = None

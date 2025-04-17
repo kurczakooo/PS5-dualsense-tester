@@ -26,9 +26,9 @@ Python program for testing ps5 dualsense controllers.
 -   [x] connection info text
 -   [x] controller info text
 -   [ ] player led testing system
--   [ ] update interface
--   [ ] sliders for left and right HF strength
--   [ ] a function executed when you close the program which resets the controller settings and states
+-   [x] update interface
+-   [x] sliders for left and right HF strength
+-   [x] a function executed when you close the program which resets the controller settings and states
 -   [ ] window with all press/release buttons values displayed
 -   [ ] make it so you dont have to rerun the program to test a new controller
 
