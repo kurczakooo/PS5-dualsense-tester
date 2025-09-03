@@ -10,7 +10,7 @@ def reset_controller():
     at.turn_off_right_adaptive_trigger()
     hf.left_motor_vibration_off()
     hf.right_motor_vibration_off()
-    pl.brightness_high_player_leds()
+    pl.set_brightness(3)
     pl.turn_off_all_player_leds()
     
 def stop():

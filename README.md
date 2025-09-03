@@ -25,13 +25,20 @@ Python program for testing ps5 dualsense controllers.
 -   [x] battery info text
 -   [x] connection info text
 -   [x] controller info text
--   [ ] player led testing system
+-   [x] player led testing system
 -   [x] update interface
 -   [x] sliders for left and right HF strength
 -   [x] a function executed when you close the program which resets the controller settings and states
 -   [ ] window with all press/release buttons values displayed
--   [ ] make it so you dont have to rerun the program to test a new controller
+-   [x] make it so you dont have to rerun the program to test a new controller
 
 ## IDEAS
 
 -   lightbars resemblence on the sides of the touchpad
+-
+
+## TO DO
+
+-   fix AT setting it bugs out
+-   fix player leds toggle so it really toggles
+-   fix exiting the app an dectivating the controller

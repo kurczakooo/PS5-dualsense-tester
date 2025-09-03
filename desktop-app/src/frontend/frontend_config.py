@@ -2,6 +2,10 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 from backend.controller_handlers.haptic_feedback import toggle_left_haptic_feedback, toggle_right_haptic_feedback
 from backend.controller_handlers.adaptive_triggers import toggle_LAT, toggle_RAT
+from backend.controller_handlers.player_led import (set_brightness, 
+                                                    turn_on_center_player_leds, 
+                                                    turn_on_inner_player_leds, 
+                                                    turn_on_outer_player_leds)
 import backend.events as events
 from backend import config
 from backend.look_for_controllers import look_for_controllers
@@ -99,7 +103,7 @@ class App:
         self.r2_progress_text = "Press 0.0"
         self.l2_progress_text = "Press 0.0"
         self.r2_progress_text_id = self.canvas.create_text(
-            440, 20, anchor='nw', 
+            465, 20, anchor='nw', 
             text=self.r2_progress_text, 
             fill="white", 
             font=('Arial', 12, 'bold')
@@ -107,22 +111,6 @@ class App:
         self.l2_progress_text_id = self.canvas.create_text(
             230, 20, anchor='nw', 
             text=self.l2_progress_text, 
-            fill="white", 
-            font=('Arial', 12, 'bold')
-        )
-        
-        #create text for triggers adaptive
-        self.r2_adaptive_text = "Adaptive 0.0"
-        self.l2_adaptive_text = "Adaptive 0.0"
-        self.r2_adaptive_text_id = self.canvas.create_text(
-            440, 40, anchor='nw', 
-            text=self.r2_adaptive_text, 
-            fill="white", 
-            font=('Arial', 12, 'bold')
-        )
-        self.l2_adaptive_text_id = self.canvas.create_text(
-            230, 40, anchor='nw', 
-            text=self.l2_adaptive_text, 
             fill="white", 
             font=('Arial', 12, 'bold')
         )
@@ -348,8 +336,8 @@ class App:
                                         command=lambda str: self.rat_slider_handler(str))
         self.RAT_pos_slider.set(0)
         
-        self.LAT_strength = 255
-        self.RAT_strength = 255
+        self.LAT_strength = 0
+        self.RAT_strength = 0
         #create sliders to set adaptive triggers strength
         self.LAT_str_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
                                         from_=0, to=255, number_of_steps=255,
@@ -384,50 +372,54 @@ class App:
             justify="center"
         )
         
-        self.LEDS_brightness = 255 
+        self.LEDS_brightness = 3
         #create a slider for brightness
         self.brightness_slider = ctk.CTkSlider(self.canvas, width=140, height=20, 
-                                               from_=0, to=3, number_of_steps=3,
-                                               command=lambda x: print(x))
+                                               from_=1, to=3, number_of_steps=2,
+                                               command=lambda val: self.player_led_br_slider_handler(val))
         self.brightness_slider.set(self.LEDS_brightness)
         
         #create buttons to toggle LEDS
-        self.inner_leds_button = ctk.CTkButton(self.canvas, text="TOGGLE INNER LEDS", command=lambda: print(""))
-        self.outer_leds_button = ctk.CTkButton(self.canvas, text="TOGGLE OUTER LEDS", command=lambda: print(""))
+        self.inner_leds_button = ctk.CTkButton(self.canvas, text="TOGGLE INNER LEDS", command=lambda: turn_on_inner_player_leds())
+        self.outer_leds_button = ctk.CTkButton(self.canvas, text="TOGGLE OUTER LEDS", command=lambda: turn_on_outer_player_leds())
 
         
         self.brightness_slider_id = self.canvas.create_window(790, 320, window=self.brightness_slider)
         self.inner_leds_button_id = self.canvas.create_window(790, 375, window=self.inner_leds_button) 
         self.outer_leds_button_id = self.canvas.create_window(950, 375, window=self.outer_leds_button)
+        
+        # bind app close handler 
+        self.app.protocol("WM_DELETE_WINDOW", self.on_close)
 
-    # def on_close(self):
-    #     # # config.is_running = False
-    #     # if config.controller:
-    #     #     config.controller.deactivate()
-    #     self.app.destroy()
+    def on_close(self):
+        config.is_running = False
+        misc.reset_controller()
+        if config.controller.is_active:  
+            config.controller.deactivate()
+        self.app.destroy()
 
     def load_images(self):
         images = {
-            "default": ImageTk.PhotoImage(Image.open("../assets/white.png").resize((750, 540))),
-            "cross": ImageTk.PhotoImage(Image.open("../assets/x_pressed.png").resize((750, 540))),
-            "triangle": ImageTk.PhotoImage(Image.open("../assets/triangle_pressed.png").resize((750, 540))),
-            "square": ImageTk.PhotoImage(Image.open("../assets/square_pressed.png").resize((750, 540))),
-            "circle": ImageTk.PhotoImage(Image.open("../assets/circle_pressed.png").resize((750, 540))),
-            "up": ImageTk.PhotoImage(Image.open("../assets/up_pressed.png").resize((750, 540))),
-            "down": ImageTk.PhotoImage(Image.open("../assets/down_pressed.png").resize((750, 540))),
-            "left": ImageTk.PhotoImage(Image.open("../assets/left_pressed.png").resize((750, 540))),
-            "right": ImageTk.PhotoImage(Image.open("../assets/right_pressed.png").resize((750, 540))),
-            "l1": ImageTk.PhotoImage(Image.open("../assets/l1_pressed.png").resize((750, 540))),
-            "l2": ImageTk.PhotoImage(Image.open("../assets/l2_pressed.png").resize((750, 540))),
-            "r1": ImageTk.PhotoImage(Image.open("../assets/r1_pressed.png").resize((750, 540))),
-            "r2": ImageTk.PhotoImage(Image.open("../assets/r2_pressed.png").resize((750, 540))),
-            "l3": ImageTk.PhotoImage(Image.open("../assets/l3_pressed.png").resize((750, 540))),
-            "r3": ImageTk.PhotoImage(Image.open("../assets/r3_pressed.png").resize((750, 540))),
-            "create": ImageTk.PhotoImage(Image.open("../assets/create_pressed.png").resize((750, 540))),
-            "options": ImageTk.PhotoImage(Image.open("../assets/options_pressed.png").resize((750, 540))),
-            "ps": ImageTk.PhotoImage(Image.open("../assets/ps_pressed.png").resize((750, 540))),
-            "touchpad": ImageTk.PhotoImage(Image.open("../assets/touchpad_pressed.png").resize((750, 540))),
-            "mute": ImageTk.PhotoImage(Image.open("../assets/mute_pressed.png").resize((750, 540))),
+            "default": ImageTk.PhotoImage(Image.open("assets/white.png").resize((750, 540))),
+            "cross": ImageTk.PhotoImage(Image.open("assets/x_pressed.png").resize((750, 540))),
+            "triangle": ImageTk.PhotoImage(Image.open("assets/triangle_pressed.png").resize((750, 540))),
+            "square": ImageTk.PhotoImage(Image.open("assets/square_pressed.png").resize((750, 540))),
+            "circle": ImageTk.PhotoImage(Image.open("assets/circle_pressed.png").resize((750, 540))),
+            "up": ImageTk.PhotoImage(Image.open("assets/up_pressed.png").resize((750, 540))),
+            "down": ImageTk.PhotoImage(Image.open("assets/down_pressed.png").resize((750, 540))),
+            "left": ImageTk.PhotoImage(Image.open("assets/left_pressed.png").resize((750, 540))),
+            "right": ImageTk.PhotoImage(Image.open("assets/right_pressed.png").resize((750, 540))),
+            "l1": ImageTk.PhotoImage(Image.open("assets/l1_pressed.png").resize((750, 540))),
+            "l2": ImageTk.PhotoImage(Image.open("assets/l2_pressed.png").resize((750, 540))),
+            "r1": ImageTk.PhotoImage(Image.open("assets/r1_pressed.png").resize((750, 540))),
+            "r2": ImageTk.PhotoImage(Image.open("assets/r2_pressed.png").resize((750, 540))),
+            "l3": ImageTk.PhotoImage(Image.open("assets/l3_pressed.png").resize((750, 540))),
+            "r3": ImageTk.PhotoImage(Image.open("assets/r3_pressed.png").resize((750, 540))),
+            "create": ImageTk.PhotoImage(Image.open("assets/create_pressed.png").resize((750, 540))),
+            "options": ImageTk.PhotoImage(Image.open("assets/options_pressed.png").resize((750, 540))),
+            "ps": ImageTk.PhotoImage(Image.open("assets/ps_pressed.png").resize((750, 540))),
+            "touchpad": ImageTk.PhotoImage(Image.open("assets/touchpad_pressed.png").resize((750, 540))),
+            "mute": ImageTk.PhotoImage(Image.open("assets/mute_pressed.png").resize((750, 540))),
         }
         return images
 # ------------------------------------------------------------------------
@@ -547,13 +539,9 @@ class App:
     
     def lat_slider_handler(self, pos):
         toggle_LAT(int(pos), self.LAT_strength)
-        self.l2_adaptive_text = f"Adaptive {int(pos)}"
-        self.canvas.itemconfig(self.l2_adaptive_text_id, text=self.l2_adaptive_text)
             
     def rat_slider_handler(self, pos):
         toggle_RAT(int(pos), self.RAT_strength)
-        self.r2_adaptive_text = f"Adaptive {int(pos)}"
-        self.canvas.itemconfig(self.r2_adaptive_text_id, text=self.r2_adaptive_text)
         
     def lat_strength_slider_handler(self, str):
         config.left_adaptive_trigger_strength = int(str)
@@ -563,15 +551,17 @@ class App:
         config.right_adaptive_trigger_strength = int(str)
         self.RAT_strength = int(str)
         
+    def player_led_br_slider_handler(self, val):
+        config.player_leds_brightness = int(val)
+        self.LEDS_brightness = int(val)
+        set_brightness(self.LEDS_brightness)
+        
     def set_controller_state_binds(self):
         self.app.bind(events.controller_disconnected_event, self.set_disconnected_screen)
         self.app.bind(events.mute_event, self.update_mute_text)
         self.app.bind(events.device_info_available_event, self.update_device_info_text)
         self.app.bind(events.battery_state_change_event, self.update_battery_info_text)
         self.app.bind(events.connection_type_available_event, self.update_connection_info_text)
-        
-        #bind app close handler 
-        # self.app.protocol("WM_DELETE_WINDOW", self.on_close)
         
         
 # ----------------------------------------------------------------------

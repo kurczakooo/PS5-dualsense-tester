@@ -6,14 +6,13 @@ def turn_on_all_player_leds():
 def turn_off_all_player_leds():
     config.controller.player_leds.set_off()
 #--------------------------------------------------------------------
-def brightness_high_player_leds():
-    config.controller.player_leds.set_brightness_high()
-
-def brightness_medium_player_leds():
-    config.controller.player_leds.set_brightness_medium()
-
-def brightness_low_player_leds():
-    config.controller.player_leds.set_brightness_low()
+def set_brightness(val):
+    if val == 1:
+        config.controller.player_leds.set_brightness_low()
+    elif val == 2:
+        config.controller.player_leds.set_brightness_medium()
+    elif val == 3:
+        config.controller.player_leds.set_brightness_high()
 #--------------------------------------------------------------------
 def turn_on_center_player_leds():
     config.controller.player_leds.set_center()
